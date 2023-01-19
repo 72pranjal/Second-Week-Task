@@ -1,7 +1,8 @@
 <template>
   <div class="nav-bar-container">
-    <!-- upper header............ -->
-    <div class="upper-nav-container">
+   <div class="both-nav-bar">
+     <!-- upper header............ -->
+     <div class="upper-nav-container">
       <div class="first-part">
         <p class="text">
           COMPLIMENTARY GIFT BOX PACKING ON ALL PRE-PAID ORDERS
@@ -99,11 +100,12 @@
         </span>
       </div>
     </div>
+   </div>
 
     <!-- after nav bar text................... -->
     <div class="text-container">
       <p class="middle-text">Women Pashmina Shawls</p>
-      <p class="count-number">555 items</p>
+      <p class="count-number">{{ totalProductCount }} Items</p>
     </div>
   </div>
 </template>
@@ -111,10 +113,16 @@
 <script>
 export default {
   name: "DeskTopHeader",
+  props: ["totalProductCount"],
 };
 </script>
 
 <style scoped>
+/* .both-nav-bar {
+  position: fixed;
+  z-index: 44444;
+  background-color: cadetblue;
+} */
 .upper-nav-container {
   width: 100%;
   background-color: #ffffff;

@@ -11,9 +11,9 @@
         </button>
       </div>
       <!-- applied filters chips........... -->
-      <div class="applied-chip-container" v-if="appliedFilters.length">
+      <div class="applied-chip-container" v-if="appliedFiltersForChips.length">
         <div class="filter-chip">
-          <span class="cross-icon-container" v-for="(appliedFilter, index) in appliedFilters" :key="index">
+          <span class="cross-icon-container" v-for="(appliedFilter, index) in appliedFiltersForChips" :key="index">
             <p class="filter-name">{{ appliedFilter }}</p>
             <span>
               <img @click="removeAppliedFilter(index)" class="cross-icon" src="@/assets/crossIcon.png" alt="" />
@@ -61,10 +61,10 @@
             <div v-if="particularOpenSubFilter.includes(filters.filter_lable)">
               <ul class="subfilters">
                 <li v-for="(subFilter, index) in filters.options" :key="index">
-                  <input class="checkbox" type="checkbox" v-model="appliedFilters" :id="subFilter.value"
-                    :value="subFilter.value" />
+                  <input class="checkbox" type="checkbox" v-model="appliedFiltersForChips"
+                    @click="getAppliedFilter(subFilter)" :id="subFilter.value" :value="subFilter.value" />
                   <label :for="subFilter.value" class="lable-subfilter">{{
-                    filters.filter_lable + "_" + subFilter.value
+                    subFilter.value
                   }}</label>
                 </li>
               </ul>
@@ -75,6 +75,9 @@
 
       <!-- all products container........... -->
       <div class="product-container" :style="{ width: isHideSideFilters ? '75%' : '100%' }">
+        <!-- <div v-if="!containProductData.length">
+         <h3> No Data are available for applied filter</h3>
+        </div> -->
         <div class="one-product-container">
           <div v-for="(products, index) in containProductData" :key="index" class=" product-image-container">
             <div class="product-image">
@@ -103,18 +106,25 @@
     <!-- Pagination section.................................. -->
     <div class="pagination-container">
       <div class="total-page-container">
-        <span>Page {{ activeButton }} of 97 </span>
+        <span>Page {{ currentPageNumber }} of 97 </span>
       </div>
 
       <div class="counting-container">
-        <button v-for="(pageCount, index) in totalPage" :key="index" class="goto-clickable-page" :style="{
-          backgroundColor: activeButton === pageCount ? '#0C0C0C' : '#FFFFFF',
-          color: activeButton === pageCount ? 'white' : '#303030',
+        <span>
+          <button class="next-button" type="button" :style="{ opacity: currentPageNumber > 1 ? '' : '0.25' }"
+            @click="goToPreviousPage">
+            Previous
+          </button>
+        </span>
+        <button v-for="(pageCount, index) in paginationNumbers" :key="index" class="goto-clickable-page" :style="{
+          backgroundColor: currentPageNumber === pageCount ? '#0C0C0C' : '#FFFFFF',
+          color: currentPageNumber === pageCount ? 'white' : '#303030',
         }" type="button" @click="handleClickThenActive(pageCount)">
           {{ pageCount }}
         </button>
         <span>
-          <button class="next-button" type="button" @click="gotoNextPage">
+          <button class="next-button" type="button" :style="{ opacity: currentPageNumber < 97 ? '' : '0.25' }"
+            @click="gotoNextPage">
             Next
           </button>
         </span>
@@ -133,11 +143,12 @@ export default {
       containProductData: [],
       particularOpenSubFilter: [],
       sortingOptions: [],
-      appliedFilters: [],
+      appliedFiltersForChips: [],
       isHideSideFilters: true,
       selectedSortingOption: "",
-      totalPage: [1, 2, 3, 4, 5, 6],
-      activeButton: 1,
+      paginationNumbers: [1, 2, 3, 4, 5, 6],
+      currentPageNumber: 1,
+      appliedFilter: [],
     };
   },
   methods: {
@@ -154,7 +165,9 @@ export default {
     // Function is used to remove applied filter in chips section when click
     // on cross icon
     removeAppliedFilter(index) {
-      this.appliedFilters.splice(index, 1);
+      this.appliedFiltersForChips.splice(index, 1);
+      this.appliedFilter.pop();
+      this.$emit("getFilterString", this.appliedFilter);
     },
 
     // function is use to hideside filter
@@ -168,7 +181,9 @@ export default {
 
     // function is use to clear all applied filters
     clearAllAppliedFilters() {
-      this.appliedFilters.splice(0, this.appliedFilters.length);
+      this.appliedFiltersForChips.splice(0, this.appliedFiltersForChips.length);
+      this.appliedFilter.splice(0, this.appliedFilter.length)
+      this.$emit("getFilterString", this.appliedFilter);
     },
 
     // FUnction is used to sort products by selected options from dropdown
@@ -178,22 +193,55 @@ export default {
 
     // Function is used for pagination active button
     handleClickThenActive(pageNo) {
-      if (!(this.activeButton === pageNo)) {
-        this.activeButton = pageNo;
-        this.$emit('handleClickThenActive', this.activeButton)
+      if (!(this.currentPageNumber === pageNo)) {
+        this.currentPageNumber = pageNo;
+        this.$emit('handleClickThenActive', this.currentPageNumber)
       } else {
-        this.activeButton = 1;
+        this.currentPageNumber = 1;
       }
     },
 
     // Function is used to goto page with increment of one in 
     // current page using next button
     gotoNextPage() {
-      if (this.activeButton < 97) {
-        this.activeButton += 1;
-        this.$emit('handleClickThenActive', this.activeButton)
+      if (this.currentPageNumber < 97) {
+        this.currentPageNumber += 1;
+        this.$emit('handleClickThenActive', this.currentPageNumber)
+      }
+      if (this.currentPageNumber > this.paginationNumbers[this.paginationNumbers.length - 1]) {
+        this.numberWhenClickNextButton();
       }
       return;
+    },
+
+    // Function is used to goto page with decrement of one in 
+    // current page using previous button
+    goToPreviousPage() {
+      if (this.currentPageNumber > 1) {
+        this.currentPageNumber -= 1;
+        this.$emit('handleClickThenActive', this.currentPageNumber)
+      }
+      if (this.currentPageNumber < this.paginationNumbers[0]) {
+        this.numberWhenClickPreButton();
+      }
+      return;
+    },
+
+    // Manage pagination number when click on the next button
+    numberWhenClickNextButton() {
+      this.paginationNumbers.splice(0, this.paginationNumbers.length)
+        for (let i = this.currentPageNumber; i <= this.currentPageNumber + 5; i++) {
+          this.paginationNumbers.push(i)
+          if(i >= 97) break;
+        }
+    },
+
+    // Manage pagination number when click on the previous button
+    numberWhenClickPreButton() {
+      this.paginationNumbers.splice(0, this.paginationNumbers.length)
+      for (let i = this.currentPageNumber - 5; i <= this.currentPageNumber; i++) {
+        this.paginationNumbers.push(i)
+      }
     },
 
     // Function is used to get data  from parent component
@@ -201,8 +249,36 @@ export default {
       this.containFiltersData = this.dataForFilters;
       this.containProductData = this.dataForProducts;
       this.sortingOptions = this.dataForSorting;
-    }
+    },
+
+    // Function is used get applied filter and store in array then send to api 
+    getAppliedFilter(applyFilter) {
+      let ispushed = true;
+      let index = null
+      let codeAndValueWithHiphan = applyFilter.code + "-" + applyFilter.value;
+      for (let i = 0; i <= this.appliedFilter.length; i++) {
+        if (this.appliedFilter[i] === codeAndValueWithHiphan) {
+          ispushed = false
+          index = i;
+          break;
+        }
+      }
+      if (ispushed) {
+        this.appliedFilter.push(codeAndValueWithHiphan)
+      } else {
+        this.appliedFilter.splice(index, 1)
+      }
+      this.$emit("getFilterString", this.appliedFilter);
+    },
+    handler() {
+      // Do Something
+      console.log("Page reload")
+  }
   },
+
+  created() {
+  window.addEventListener('beforeunload', this.handler)
+},
   mounted() {
     this.getDataFrom();
   },
@@ -214,7 +290,7 @@ export default {
       this.getDataFrom();
     },
     currentPagination() {
-      this.activeButton = this.currentPagination
+      this.currentPageNumber = this.currentPagination
     },
   },
 };
@@ -427,7 +503,12 @@ li {
   color: #4C0B36;
   font-size: 16px;
   background-color: #ffffff;
-  border: 1px solid #0c0c0c;
+  border: none;
   cursor: pointer;
+}
+
+.next-button:hover {
+  color: white;
+  background-color: black;
 }
 </style>

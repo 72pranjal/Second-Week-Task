@@ -12,11 +12,14 @@
       </div>
       <!-- applied filters chips........... -->
       <div class="applied-chip-container" v-if="appliedFiltersForChips.length">
-        <div class="filter-chip">
-          <span class="cross-icon-container" v-for="(appliedFilter, index) in appliedFiltersForChips" :key="index">
+        <div 
+        class="cross-icon-container"
+        v-for="(appliedFilter, index) in appliedFiltersForChips" :key="index"
+        >
+          <span class="filter-chip">
             <p class="filter-name">{{ appliedFilter }}</p>
             <span>
-              <img @click="removeAppliedFilter(index)" class="cross-icon" src="@/assets/crossIcon.png" alt="" />
+              <img @click="removeAppliedFilter(index)" class="cross-icon" src="@/assets/darkCrosIcon.png" alt="" />
             </span>
           </span>
         </div>
@@ -32,13 +35,20 @@
           </option>
         </select>
       </div>
+
+      <!-- mobile view botton nav bar............................. -->
+      <div class="bottom-nav-bar">
+          <SortFilterBarVue
+          :sortingOptions="sortingOptions"
+           />
+      </div>
     </div>
 
     <!-- Contain side filter and product.................. -->
     <div class="filter-product-container">
       <!-- side filter bar container ........... -->
       <div v-if="isHideSideFilters" class="side-filter-container">
-        <div>
+        <div v-if="appliedFiltersForChips.length">
           <button @click="clearAllAppliedFilters" class="clear-button">
             Clear All
           </button>
@@ -74,10 +84,8 @@
       </div>
 
       <!-- all products container........... -->
-      <div class="product-container" :style="{ width: isHideSideFilters ? '75%' : '100%' }">
-        <!-- <div v-if="!containProductData.length">
-         <h3> No Data are available for applied filter</h3>
-        </div> -->
+      <!-- :style="{ width: isHideSideFilters ? '75%' : '100%' }" -->
+      <div class="product-container" >
         <div class="one-product-container">
           <div v-for="(products, index) in containProductData" :key="index" class=" product-image-container">
             <div class="product-image">
@@ -134,8 +142,13 @@
 </template>
 
 <script>
+import SortFilterBarVue from '../BaseAppShellHeader/Sort&FilterBar.vue';
+
 export default {
   name: "ProductContainer",
+  components: {
+    SortFilterBarVue,
+  },
   props: ["dataForFilters", "dataForProducts", "dataForSorting", "currentPagination"],
   data() {
     return {
@@ -301,30 +314,36 @@ export default {
   width: 100%;
   height: auto;
   display: flex;
+  margin: 20px 0px;
   align-items: center;
   justify-content: space-between;
 }
 
 .hide-filter-container {
   width: 20%;
-  margin: 20px;
+  margin: 10px 3px;
+  display: block;
 }
 
 .applied-chip-container {
   width: 58%;
   height: auto;
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 10px;
+  row-gap: 10px;
 }
 
 .filter-chip {
   display: flex;
-  flex-wrap: wrap;
   column-gap: 10px;
-  height: 35px;
+  align-items: center;
 }
 
 .dropdown-container {
   width: 15%;
   margin: 10px;
+  display: block;
 }
 
 .hide-all-filter {
@@ -341,13 +360,11 @@ export default {
 }
 
 .cross-icon-container {
-  display: flex;
-  width: auto;
-  column-gap: 10px;
-  padding: 0px 10px;
-  align-items: center;
-  border-radius: 30px;
-  border: 1px solid black;
+  font-size: 13px;
+  padding: 2px 24px;
+  border-radius: 18px;
+  border: 1px solid #707070;
+  display: inline-block;
 }
 
 .filter-name {
@@ -365,6 +382,7 @@ export default {
   height: 40px;
   padding: 4px;
   font-size: 16px;
+  border: 1px solid #707070;
   cursor: pointer;
 }
 
@@ -389,22 +407,29 @@ export default {
   flex: 0 0 22%;
   height: auto;
   box-sizing: border-box;
-  padding: 20px;
   background-color: #ffffff;
   font-size: 16px;
+  display: block;
 }
 
 li {
   list-style: none;
   color: #303030;
+  cursor: pointer;
 }
 
 .clear-button {
-  padding: 4px;
-  font-size: 12px;
-  color: #303030;
+  padding: 5px 12px;
+  font-size: 15px;
+  color: #000;
   cursor: pointer;
-  background-color: #ffffff;
+  border-radius: 50px;
+  border: 1px solid #707070;
+  background-color: #fff;
+}
+.clear-button:hover {
+  background-color: #000;
+  color: #fff;
 }
 
 .subfilters {
@@ -510,5 +535,37 @@ li {
 .next-button:hover {
   color: white;
   background-color: black;
+}
+
+.bottom-nav-bar {
+  display: none;
+}
+@media screen and (max-width: 768px) {
+  .side-filter-container {
+  display: none;
+}
+.product-container {
+  width: 100%;
+  box-sizing: border-box;
+}
+.product-image-container {
+  width: 48%;
+}
+.image-kurta {
+  width: 100%;
+}
+.one-product-container {
+  justify-content: space-between;
+  display: flex;
+}
+.hide-filter-container {
+  display: none;
+}
+.dropdown-container {
+ display: none;
+}
+.bottom-nav-bar {
+  display: block;
+}
 }
 </style>

@@ -1,25 +1,25 @@
 <template>
   <div id="app">
-    <DeskTopHeader
-    :totalProductCount="totalProductCount"
-     />
-    <ProductContainer v-if="filtersData.length" :dataForFilters="filtersData" :dataForProducts="productsData"
-      :dataForSorting="sortingOptions"
-       @handleClickThenActive="getProductOfCurrentPage" 
-      @sortData="getSortedData"
-      @getFilterString="getFilters"
-      :currentPagination="currentPagination" />
+    <DeskTopHeader :totalProductCount="totalProductCount" />
+    <div class="container">
+      <ProductContainer v-if="filtersData.length" :dataForFilters="filtersData" :dataForProducts="productsData"
+        :dataForSorting="sortingOptions" @handleClickThenActive="getProductOfCurrentPage" @sortData="getSortedData"
+        @getFilterString="getFilters" :currentPagination="currentPagination" />
+      <DestTopFooter />
+    </div>
   </div>
 </template>
 
 <script>
 import DeskTopHeader from "./components/BaseAppShellHeader/DeskTopHeader.vue";
 import ProductContainer from "./components/ProductContainer/ProductContainer.vue";
+import DestTopFooter from "./components/BaseAppShellFooter/DestTopFooter.vue";
 
 export default {
   components: {
     DeskTopHeader,
     ProductContainer,
+    DestTopFooter,
   },
   data() {
     return {
@@ -29,7 +29,7 @@ export default {
       totalProductCount: 0,
       currentPagination: 1,
       sortingValue: "",
-      filterSting:""
+      filterSting: "",
     };
   },
   methods: {
@@ -63,7 +63,7 @@ export default {
       });
     },
 
-    // Function is used to get product data from api accoding to 
+    // Function is used to get product data from api accoding to
     // applied filters bt user
     getFiltersData() {
       const axios = require("axios");
@@ -77,12 +77,16 @@ export default {
     // and get data according to current page
     getProductOfCurrentPage(currentPage) {
       this.currentPagination = currentPage;
-      this.getDataOfCurrentPage();
+      if (this.filterSting) {
+        this.getFiltersData();
+      } else {
+        this.getDataOfCurrentPage();
+      }
     },
 
-    // Function is used to check 
+    // Function is used to check
     // If sorting option is selected then get data according to selected option
-    // If sorting option is selected and current page is greater than 1 then send back to 
+    // If sorting option is selected and current page is greater than 1 then send back to
     // first page number with selected sorting option
     getSortedData(sortedValue) {
       this.sortingValue = sortedValue;
@@ -92,15 +96,30 @@ export default {
       this.getSortedDataFromApi();
     },
 
-    // Function is used check the applied filter array lenght is zero or not 
+    // Function is used check the applied filter array lenght is zero or not
     getFilters(applyFilters) {
-        if(applyFilters.length) {
-        this.filterSting = applyFilters[applyFilters.length - 1]
-        this.getFiltersData();
+      if (applyFilters.length) {
+        if (applyFilters.length > 1) {
+          let str = "";
+          for (let i = 0; i < applyFilters.length; i++) {
+            if(!str){
+              str = str + applyFilters[i]
+            } else {
+              str = str + "," + applyFilters[i]
+            }
+          }
+          this.filterSting = str;
         } else {
-          this.getProductData()
+          this.filterSting = applyFilters[0];
         }
-    }
+        if (this.currentPagination > 1) this.currentPagination = 1;
+        this.getFiltersData();
+      } else {
+        this.filterSting = ""
+        this.getDataOfCurrentPage();
+        // this.getProductData();
+      }
+    },
   },
 
   mounted() {
@@ -111,6 +130,11 @@ export default {
 
 <style>
 #app {
-  background-color: #ffffff;
+  background-color: #fff;
+  width: 100%;
+}
+.container {
+ padding: 0px 10px;
+ font-family: Jost-regular;
 }
 </style>

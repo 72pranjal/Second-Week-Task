@@ -4,22 +4,33 @@
     <div class="sort-option-container">
       <!-- hide filter button........... -->
       <div class="hide-filter-container">
-        <img v-if="isHideSideFilters" @click="hideSideFilter" class="hide-all-filter" src="@/assets/sideHilterHide.svg"
-          alt="" />
+        <img
+          v-if="isHideSideFilters"
+          @click="hideSideFilter"
+          class="hide-all-filter"
+          src="@/assets/sideHilterHide.svg"
+          alt=""
+        />
         <button class="show-filter-button" v-else @click="showSideFilters">
           Show Filter
         </button>
       </div>
       <!-- applied filters chips........... -->
       <div class="applied-chip-container" v-if="appliedFiltersForChips.length">
-        <div 
-        class="cross-icon-container"
-        v-for="(appliedFilter, index) in appliedFiltersForChips" :key="index"
+        <div
+          class="cross-icon-container"
+          v-for="(appliedFilter, index) in appliedFiltersForChips"
+          :key="index"
         >
           <span class="filter-chip">
             <p class="filter-name">{{ appliedFilter }}</p>
             <span>
-              <img @click="removeAppliedFilter(index)" class="cross-icon" src="@/assets/darkCrosIcon.png" alt="" />
+              <img
+                @click="removeAppliedFilter(index)"
+                class="cross-icon"
+                src="@/assets/darkCrosIcon.png"
+                alt=""
+              />
             </span>
           </span>
         </div>
@@ -30,7 +41,12 @@
           <option class="drop-options" value="" disabled selected>
             Sort By
           </option>
-          <option v-for="(option, index) in sortingOptions" :key="index" class="drop-options" :value="option.code">
+          <option
+            v-for="(option, index) in sortingOptions"
+            :key="index"
+            class="drop-options"
+            :value="option.code"
+          >
             {{ option.label }}
           </option>
         </select>
@@ -38,9 +54,7 @@
 
       <!-- mobile view botton nav bar............................. -->
       <div class="bottom-nav-bar">
-          <SortFilterBarVue
-          :sortingOptions="sortingOptions"
-           />
+        <SortFilterBarVue :sortingOptions="sortingOptions" />
       </div>
     </div>
 
@@ -54,25 +68,45 @@
           </button>
         </div>
         <div>
-          <div class="filter-container" v-for="(filters, index) in containFiltersData" :key="index">
+          <div
+            class="filter-container"
+            v-for="(filters, index) in containFiltersData"
+            :key="index"
+          >
             <div class="filter-head">
               <p @click="showSubFIlters(filters.filter_lable)">
                 {{ filters.filter_lable }}
               </p>
-              <span v-if="!particularOpenSubFilter.includes(filters.filter_lable)">
-                <img @click="showSubFIlters(filters.filter_lable)" class="plus-icon" src="@/assets/plusIcon.png"
-                  alt="" />
+              <span
+                v-if="!particularOpenSubFilter.includes(filters.filter_lable)"
+              >
+                <img
+                  @click="showSubFIlters(filters.filter_lable)"
+                  class="plus-icon"
+                  src="@/assets/plusIcon.png"
+                  alt=""
+                />
               </span>
               <span v-else>
-                <img @click="showSubFIlters(filters.filter_lable)" class="plus-icon" src="@/assets/minusIcon.png"
-                  alt="" />
+                <img
+                  @click="showSubFIlters(filters.filter_lable)"
+                  class="plus-icon"
+                  src="@/assets/minusIcon.png"
+                  alt=""
+                />
               </span>
             </div>
             <div v-if="particularOpenSubFilter.includes(filters.filter_lable)">
               <ul class="subfilters">
                 <li v-for="(subFilter, index) in filters.options" :key="index">
-                  <input class="checkbox" type="checkbox" v-model="appliedFiltersForChips"
-                    @click="getAppliedFilter(subFilter)" :id="subFilter.value" :value="subFilter.value" />
+                  <input
+                    class="checkbox"
+                    type="checkbox"
+                    v-model="appliedFiltersForChips"
+                    @click="getAppliedFilter(subFilter)"
+                    :id="subFilter.value"
+                    :value="subFilter.value"
+                  />
                   <label :for="subFilter.value" class="lable-subfilter">{{
                     subFilter.value
                   }}</label>
@@ -85,9 +119,13 @@
 
       <!-- all products container........... -->
       <!-- :style="{ width: isHideSideFilters ? '75%' : '100%' }" -->
-      <div class="product-container" >
+      <div class="product-container">
         <div class="one-product-container">
-          <div v-for="(products, index) in containProductData" :key="index" class=" product-image-container">
+          <div
+            v-for="(products, index) in containProductData"
+            :key="index"
+            class="product-image-container"
+          >
             <div class="product-image">
               <img class="image-kurta" :src="products.image" alt="" />
 
@@ -118,23 +156,57 @@
       </div>
 
       <div class="counting-container">
-        <span>
-          <button class="next-button" type="button" :style="{ opacity: currentPageNumber > 1 ? '' : '0.25' }"
-            @click="goToPreviousPage">
+        <span class="show-in-desktop-view">
+          <button
+            class="next-button"
+            type="button"
+            :style="{ opacity: currentPageNumber > 1 ? '' : '0.25' }"
+            @click="goToPreviousPage"
+          >
             Previous
           </button>
         </span>
-        <button v-for="(pageCount, index) in paginationNumbers" :key="index" class="goto-clickable-page" :style="{
-          backgroundColor: currentPageNumber === pageCount ? '#0C0C0C' : '#FFFFFF',
-          color: currentPageNumber === pageCount ? 'white' : '#303030',
-        }" type="button" @click="handleClickThenActive(pageCount)">
+        <span class="show-in-mobile-view">
+          <img
+            @click="goToPreviousPage"
+            class="goto-icon"
+            src="@/assets/leftarrowIcon.png"
+            alt=""
+            :style="{ opacity: currentPageNumber > 1 ? '' : '0.25' }"
+          />
+        </span>
+        <button
+          v-for="(pageCount, index) in paginationNumbers"
+          :key="index"
+          class="goto-clickable-page"
+          :style="{
+            backgroundColor:
+              currentPageNumber === pageCount ? '#0C0C0C' : '#FFFFFF',
+            color: currentPageNumber === pageCount ? 'white' : '#303030',
+          }"
+          type="button"
+          @click="handleClickThenActive(pageCount)"
+        >
           {{ pageCount }}
         </button>
-        <span>
-          <button class="next-button" type="button" :style="{ opacity: currentPageNumber < 97 ? '' : '0.25' }"
-            @click="gotoNextPage">
+        <span class="show-in-desktop-view">
+          <button
+            class="next-button"
+            type="button"
+            :style="{ opacity: currentPageNumber < 97 ? '' : '0.25' }"
+            @click="gotoNextPage"
+          >
             Next
           </button>
+        </span>
+        <span class="show-in-mobile-view">
+          <img
+            class="goto-icon"
+            @click="gotoNextPage"
+            src="@/assets/rightArrowIcon.png"
+            alt=""
+            :style="{ opacity: currentPageNumber < 97 ? '' : '0.25' }"
+          />
         </span>
       </div>
     </div>
@@ -142,14 +214,19 @@
 </template>
 
 <script>
-import SortFilterBarVue from '../BaseAppShellHeader/Sort&FilterBar.vue';
+import SortFilterBarVue from "../BaseAppShellHeader/Sort&FilterBar.vue";
 
 export default {
   name: "ProductContainer",
   components: {
     SortFilterBarVue,
   },
-  props: ["dataForFilters", "dataForProducts", "dataForSorting", "currentPagination"],
+  props: [
+    "dataForFilters",
+    "dataForProducts",
+    "dataForSorting",
+    "currentPagination",
+  ],
   data() {
     return {
       containFiltersData: [],
@@ -195,44 +272,47 @@ export default {
     // function is use to clear all applied filters
     clearAllAppliedFilters() {
       this.appliedFiltersForChips.splice(0, this.appliedFiltersForChips.length);
-      this.appliedFilter.splice(0, this.appliedFilter.length)
+      this.appliedFilter.splice(0, this.appliedFilter.length);
       this.$emit("getFilterString", this.appliedFilter);
     },
 
     // FUnction is used to sort products by selected options from dropdown
     sortBySelectedOption() {
-      this.$emit('sortData', this.selectedSortingOption)
+      this.$emit("sortData", this.selectedSortingOption);
     },
 
     // Function is used for pagination active button
     handleClickThenActive(pageNo) {
       if (!(this.currentPageNumber === pageNo)) {
         this.currentPageNumber = pageNo;
-        this.$emit('handleClickThenActive', this.currentPageNumber)
+        this.$emit("handleClickThenActive", this.currentPageNumber);
       } else {
         this.currentPageNumber = 1;
       }
     },
 
-    // Function is used to goto page with increment of one in 
+    // Function is used to goto page with increment of one in
     // current page using next button
     gotoNextPage() {
       if (this.currentPageNumber < 97) {
         this.currentPageNumber += 1;
-        this.$emit('handleClickThenActive', this.currentPageNumber)
+        this.$emit("handleClickThenActive", this.currentPageNumber);
       }
-      if (this.currentPageNumber > this.paginationNumbers[this.paginationNumbers.length - 1]) {
+      if (
+        this.currentPageNumber >
+        this.paginationNumbers[this.paginationNumbers.length - 1]
+      ) {
         this.numberWhenClickNextButton();
       }
       return;
     },
 
-    // Function is used to goto page with decrement of one in 
+    // Function is used to goto page with decrement of one in
     // current page using previous button
     goToPreviousPage() {
       if (this.currentPageNumber > 1) {
         this.currentPageNumber -= 1;
-        this.$emit('handleClickThenActive', this.currentPageNumber)
+        this.$emit("handleClickThenActive", this.currentPageNumber);
       }
       if (this.currentPageNumber < this.paginationNumbers[0]) {
         this.numberWhenClickPreButton();
@@ -242,18 +322,26 @@ export default {
 
     // Manage pagination number when click on the next button
     numberWhenClickNextButton() {
-      this.paginationNumbers.splice(0, this.paginationNumbers.length)
-        for (let i = this.currentPageNumber; i <= this.currentPageNumber + 5; i++) {
-          this.paginationNumbers.push(i)
-          if(i >= 97) break;
-        }
+      this.paginationNumbers.splice(0, this.paginationNumbers.length);
+      for (
+        let i = this.currentPageNumber;
+        i <= this.currentPageNumber + 5;
+        i++
+      ) {
+        this.paginationNumbers.push(i);
+        if (i >= 97) break;
+      }
     },
 
     // Manage pagination number when click on the previous button
     numberWhenClickPreButton() {
-      this.paginationNumbers.splice(0, this.paginationNumbers.length)
-      for (let i = this.currentPageNumber - 5; i <= this.currentPageNumber; i++) {
-        this.paginationNumbers.push(i)
+      this.paginationNumbers.splice(0, this.paginationNumbers.length);
+      for (
+        let i = this.currentPageNumber - 5;
+        i <= this.currentPageNumber;
+        i++
+      ) {
+        this.paginationNumbers.push(i);
       }
     },
 
@@ -264,34 +352,34 @@ export default {
       this.sortingOptions = this.dataForSorting;
     },
 
-    // Function is used get applied filter and store in array then send to api 
+    // Function is used get applied filter and store in array then send to api
     getAppliedFilter(applyFilter) {
       let ispushed = true;
-      let index = null
+      let index = null;
       let codeAndValueWithHiphan = applyFilter.code + "-" + applyFilter.value;
       for (let i = 0; i <= this.appliedFilter.length; i++) {
         if (this.appliedFilter[i] === codeAndValueWithHiphan) {
-          ispushed = false
+          ispushed = false;
           index = i;
           break;
         }
       }
       if (ispushed) {
-        this.appliedFilter.push(codeAndValueWithHiphan)
+        this.appliedFilter.push(codeAndValueWithHiphan);
       } else {
-        this.appliedFilter.splice(index, 1)
+        this.appliedFilter.splice(index, 1);
       }
       this.$emit("getFilterString", this.appliedFilter);
     },
     handler() {
       // Do Something
-      console.log("Page reload")
-  }
+      console.log("Page reload");
+    },
   },
 
   created() {
-  window.addEventListener('beforeunload', this.handler)
-},
+    window.addEventListener("beforeunload", this.handler);
+  },
   mounted() {
     this.getDataFrom();
   },
@@ -303,7 +391,7 @@ export default {
       this.getDataFrom();
     },
     currentPagination() {
-      this.currentPageNumber = this.currentPagination
+      this.currentPageNumber = this.currentPagination;
     },
   },
 };
@@ -510,8 +598,11 @@ li {
 .counting-container {
   width: 80%;
   margin-left: 10px;
+  display: flex;
+  column-gap: 20px;
+  align-items: center;
   font-size: 16px;
-  color: #4C0B36;
+  color: #4c0b36;
   text-align: center;
 }
 
@@ -525,7 +616,7 @@ li {
 
 .next-button {
   padding: 10px;
-  color: #4C0B36;
+  color: #4c0b36;
   font-size: 16px;
   background-color: #ffffff;
   border: none;
@@ -540,32 +631,49 @@ li {
 .bottom-nav-bar {
   display: none;
 }
-@media screen and (max-width: 768px) {
-  .side-filter-container {
-  display: none;
-}
-.product-container {
-  width: 100%;
-  box-sizing: border-box;
-}
-.product-image-container {
-  width: 48%;
-}
-.image-kurta {
-  width: 100%;
-}
-.one-product-container {
-  justify-content: space-between;
-  display: flex;
-}
-.hide-filter-container {
-  display: none;
-}
-.dropdown-container {
- display: none;
-}
-.bottom-nav-bar {
+.show-in-desktop-view {
   display: block;
 }
+.show-in-mobile-view {
+  display: none;
+}
+
+@media screen and (max-width: 768px) {
+  .side-filter-container {
+    display: none;
+  }
+  .product-container {
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .product-image-container {
+    width: 48%;
+  }
+  .image-kurta {
+    width: 100%;
+  }
+  .one-product-container {
+    justify-content: space-between;
+    display: flex;
+  }
+  .hide-filter-container {
+    display: none;
+  }
+  .dropdown-container {
+    display: none;
+  }
+  .bottom-nav-bar {
+    display: block;
+  }
+  .show-in-desktop-view {
+    display: none;
+  }
+  .show-in-mobile-view {
+    display: block;
+  }
+  .goto-icon {
+    width: 16px;
+    height: 16px;
+  }
 }
 </style>

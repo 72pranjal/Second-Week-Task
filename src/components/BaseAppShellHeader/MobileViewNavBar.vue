@@ -126,8 +126,8 @@ export default {
 
 .action-container {
     display: flex;
-    column-gap: 20px;
     align-items: center;
+    text-align: end;
 }
 
 .action-image {

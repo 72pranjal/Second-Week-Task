@@ -144,6 +144,7 @@ display: block;
 .nav-items {
   display: flex;
   float: right;
+  align-items: center;
   column-gap: 30px;
   margin: 0px;
 }
@@ -231,7 +232,7 @@ li {
 }
 
 
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 999px) {
   .both-nav-bar {
     display: none;
   }

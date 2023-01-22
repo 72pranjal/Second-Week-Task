@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div v-if="isShowSortingList" class="sorting-option-container">
+        <div v-if="isShowSortingList && !isShowMobileFiler" class="sorting-option-container">
             <div class="sorting-option">
                 <ul>
                     <li>Sort: By</li>
@@ -12,36 +12,56 @@
         </div>
         <div class="sort-filter-container">
             <div class="sort-button">
-                <button @click="isShowSortingList = !isShowSortingList" class="action-button" type="button">
+                <button v-if="!isShowMobileFiler" @click="isShowSortingList = !isShowSortingList" class="action-button" type="button">
                     SORT: BY
+                </button>
+                <button @click="hideMobileFilter" v-else type="button"  class="action-button">
+                   CLOSE
                 </button>
             </div>
             <div class="filter-button">
-                <button class="action-button" type="button">FILTER</button>
+                <button @click="showMobileFIlter" class="action-button" type="button">FILTER</button>
             </div>
         </div>
     </div>
 </template>
 
 <script>
+
 export default {
-    name: "Sort&FilterBar",
+    name: "SortAndFilterBar",
     props: ["sortingOptions"],
     data() {
         return {
             isShowSortingList: false,
+            isShowMobileFiler: false,
+            isHideMobileFIlter: false
         };
     },
+    methods: {
+        showMobileFIlter() {
+            this.isShowMobileFiler = true;
+            this.isShowSortingList = false
+            this.$emit("showMobileFIlter", this.isShowMobileFiler)
+        },
+        hideMobileFilter() {
+           this.isShowMobileFiler = false
+            this.$emit("showMobileFIlter", this.isShowMobileFiler)
+        }
+    }
 };
 </script>
 
 <style scoped>
 .sort-filter-container {
     width: 100%;
+    max-width: 100%;
     background-color: #fff;
     position: fixed;
     z-index: 10000;
     bottom: 0px;
+    left: 0px;
+    right: opx;
     display: flex;
     justify-content: space-between;
 }
@@ -75,8 +95,9 @@ ul {
     width: 100%;
     background-color: #fff;
     color: #000;
-    padding: 18px 2px;
+    padding: 20px 2px;
     border: none;
+    font-size: 16px;
     font-weight: 800;
     cursor: pointer;
 }
@@ -86,7 +107,7 @@ ul {
     width: 95%;
     margin: auto;
     background-color: #fff;
-    bottom: 50px;
+    bottom: 70px;
     z-index: 54553;
 }
 </style>

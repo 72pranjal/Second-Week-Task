@@ -4,33 +4,19 @@
     <div class="sort-option-container">
       <!-- hide filter button........... -->
       <div class="hide-filter-container">
-        <img
-          v-if="isHideSideFilters"
-          @click="hideSideFilter"
-          class="hide-all-filter"
-          src="@/assets/sideHilterHide.svg"
-          alt=""
-        />
+        <img v-if="isHideSideFilters" @click="hideSideFilter" class="hide-all-filter" src="@/assets/sideHilterHide.svg"
+          alt="" />
         <button class="show-filter-button" v-else @click="showSideFilters">
           Show Filter
         </button>
       </div>
       <!-- applied filters chips........... -->
       <div class="applied-chip-container" v-if="appliedFiltersForChips.length">
-        <div
-          class="cross-icon-container"
-          v-for="(appliedFilter, index) in appliedFiltersForChips"
-          :key="index"
-        >
+        <div class="cross-icon-container" v-for="(appliedFilter, index) in appliedFiltersForChips" :key="index">
           <span class="filter-chip">
             <p class="filter-name">{{ appliedFilter }}</p>
             <span>
-              <img
-                @click="removeAppliedFilter(index)"
-                class="cross-icon"
-                src="@/assets/darkCrosIcon.png"
-                alt=""
-              />
+              <img @click="removeAppliedFilter(index)" class="cross-icon" src="@/assets/darkCrosIcon.png" alt="" />
             </span>
           </span>
         </div>
@@ -41,12 +27,7 @@
           <option class="drop-options" value="" disabled selected>
             Sort By
           </option>
-          <option
-            v-for="(option, index) in sortingOptions"
-            :key="index"
-            class="drop-options"
-            :value="option.code"
-          >
+          <option v-for="(option, index) in sortingOptions" :key="index" class="drop-options" :value="option.code">
             {{ option.label }}
           </option>
         </select>
@@ -54,7 +35,10 @@
 
       <!-- mobile view botton nav bar............................. -->
       <div class="bottom-nav-bar">
-        <SortFilterBarVue :sortingOptions="sortingOptions" />
+        <SortAndFilterBar
+         :sortingOptions="sortingOptions" 
+         @showMobileFIlter="showFilters"
+         />
       </div>
     </div>
 
@@ -68,45 +52,25 @@
           </button>
         </div>
         <div>
-          <div
-            class="filter-container"
-            v-for="(filters, index) in containFiltersData"
-            :key="index"
-          >
+          <div class="filter-container" v-for="(filters, index) in containFiltersData" :key="index">
             <div class="filter-head">
               <p @click="showSubFIlters(filters.filter_lable)">
                 {{ filters.filter_lable }}
               </p>
-              <span
-                v-if="!particularOpenSubFilter.includes(filters.filter_lable)"
-              >
-                <img
-                  @click="showSubFIlters(filters.filter_lable)"
-                  class="plus-icon"
-                  src="@/assets/plusIcon.png"
-                  alt=""
-                />
+              <span v-if="!particularOpenSubFilter.includes(filters.filter_lable)">
+                <img @click="showSubFIlters(filters.filter_lable)" class="plus-icon" src="@/assets/plusIcon.png"
+                  alt="" />
               </span>
               <span v-else>
-                <img
-                  @click="showSubFIlters(filters.filter_lable)"
-                  class="plus-icon"
-                  src="@/assets/minusIcon.png"
-                  alt=""
-                />
+                <img @click="showSubFIlters(filters.filter_lable)" class="plus-icon" src="@/assets/minusIcon.png"
+                  alt="" />
               </span>
             </div>
             <div v-if="particularOpenSubFilter.includes(filters.filter_lable)">
               <ul class="subfilters">
                 <li v-for="(subFilter, index) in filters.options" :key="index">
-                  <input
-                    class="checkbox"
-                    type="checkbox"
-                    v-model="appliedFiltersForChips"
-                    @click="getAppliedFilter(subFilter)"
-                    :id="subFilter.value"
-                    :value="subFilter.value"
-                  />
+                  <input class="checkbox" type="checkbox" v-model="appliedFiltersForChips"
+                    @click="getAppliedFilter(subFilter)" :id="subFilter.value" :value="subFilter.value" />
                   <label :for="subFilter.value" class="lable-subfilter">{{
                     subFilter.value
                   }}</label>
@@ -116,16 +80,11 @@
           </div>
         </div>
       </div>
-
       <!-- all products container........... -->
       <!-- :style="{ width: isHideSideFilters ? '75%' : '100%' }" -->
       <div class="product-container">
         <div class="one-product-container">
-          <div
-            v-for="(products, index) in containProductData"
-            :key="index"
-            class="product-image-container"
-          >
+          <div v-for="(products, index) in containProductData" :key="index" class="product-image-container">
             <div class="product-image">
               <img class="image-kurta" :src="products.image" alt="" />
 
@@ -148,6 +107,43 @@
         </div>
       </div>
     </div>
+    <!-- Side filter in mobile vue................................................. -->
+    <div v-if="showingMobileFilter" class="mobile-filter-container">
+      <div class="mobile-filter">
+        <div class="header">
+          <p class="header-text">Filters</p>
+          <div v-if="appliedFiltersForChips.length">
+          <button @click="clearAllAppliedFilters" class="clear-button">
+            Clear All
+          </button>
+        </div>
+        </div>
+        <div v-for="(filters, index) in containFiltersData" :key="index">
+          <div class="filters-container">
+            <div class="filter-lable-container">
+                <button 
+                class="label-button"
+                :style="{backgroundColor: particularOpenSubFilter.includes(filters.filter_lable) ? '#fff' : ''}"
+                 @click="showSubFIltersMobileView(filters.filter_lable)"
+                 >
+                {{ filters.filter_lable }}
+              </button>
+            </div>
+            <div v-if="particularOpenSubFilter.includes(filters.filter_lable)" class="filter-options-container">
+              <ul class="subfilters">
+                <li v-for="(subFilter, index) in filters.options" :key="index">
+                  <input class="checkbox" type="checkbox" v-model="appliedFiltersForChips" @click="getAppliedFilter(subFilter)"
+                    :id="subFilter.value" :value="subFilter.value" />
+                  <label :for="subFilter.value" class="lable-subfilter">{{
+                    subFilter.value
+                  }}</label>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- Pagination section.................................. -->
     <div class="pagination-container">
@@ -157,56 +153,31 @@
 
       <div class="counting-container">
         <span class="show-in-desktop-view">
-          <button
-            class="next-button"
-            type="button"
-            :style="{ opacity: currentPageNumber > 1 ? '' : '0.25' }"
-            @click="goToPreviousPage"
-          >
+          <button class="next-button" type="button" :style="{ opacity: currentPageNumber > 1 ? '' : '0.25' }"
+            @click="goToPreviousPage">
             Previous
           </button>
         </span>
         <span class="show-in-mobile-view">
-          <img
-            @click="goToPreviousPage"
-            class="goto-icon"
-            src="@/assets/leftarrowIcon.png"
-            alt=""
-            :style="{ opacity: currentPageNumber > 1 ? '' : '0.25' }"
-          />
+          <img @click="goToPreviousPage" class="goto-icon" src="@/assets/leftarrowIcon.png" alt=""
+            :style="{ opacity: currentPageNumber > 1 ? '' : '0.25' }" />
         </span>
-        <button
-          v-for="(pageCount, index) in paginationNumbers"
-          :key="index"
-          class="goto-clickable-page"
-          :style="{
-            backgroundColor:
-              currentPageNumber === pageCount ? '#0C0C0C' : '#FFFFFF',
-            color: currentPageNumber === pageCount ? 'white' : '#303030',
-          }"
-          type="button"
-          @click="handleClickThenActive(pageCount)"
-        >
+        <button v-for="(pageCount, index) in paginationNumbers" :key="index" class="goto-clickable-page" :style="{
+          backgroundColor:
+            currentPageNumber === pageCount ? '#0C0C0C' : '#FFFFFF',
+          color: currentPageNumber === pageCount ? 'white' : '#303030',
+        }" type="button" @click="handleClickThenActive(pageCount)">
           {{ pageCount }}
         </button>
         <span class="show-in-desktop-view">
-          <button
-            class="next-button"
-            type="button"
-            :style="{ opacity: currentPageNumber < 97 ? '' : '0.25' }"
-            @click="gotoNextPage"
-          >
+          <button class="next-button" type="button" :style="{ opacity: currentPageNumber < 97 ? '' : '0.25' }"
+            @click="gotoNextPage">
             Next
           </button>
         </span>
         <span class="show-in-mobile-view">
-          <img
-            class="goto-icon"
-            @click="gotoNextPage"
-            src="@/assets/rightArrowIcon.png"
-            alt=""
-            :style="{ opacity: currentPageNumber < 97 ? '' : '0.25' }"
-          />
+          <img class="goto-icon" @click="gotoNextPage" src="@/assets/rightArrowIcon.png" alt=""
+            :style="{ opacity: currentPageNumber < 97 ? '' : '0.25' }" />
         </span>
       </div>
     </div>
@@ -214,12 +185,12 @@
 </template>
 
 <script>
-import SortFilterBarVue from "../BaseAppShellHeader/Sort&FilterBar.vue";
+import SortAndFilterBar from "../BaseAppShellHeader/SortAndFilterBar.vue";
 
 export default {
   name: "ProductContainer",
   components: {
-    SortFilterBarVue,
+    SortAndFilterBar,
   },
   props: [
     "dataForFilters",
@@ -239,16 +210,28 @@ export default {
       paginationNumbers: [1, 2, 3, 4, 5, 6],
       currentPageNumber: 1,
       appliedFilter: [],
+      showingMobileFilter: false,
     };
   },
   methods: {
-    // Function is used for open and hide sub filters
+
+    // Function is used for open and hide sub filters in destTop view
     showSubFIlters(productId) {
       if (!this.particularOpenSubFilter.includes(productId)) {
         this.particularOpenSubFilter.push(productId);
       } else {
         let index = this.particularOpenSubFilter.indexOf(productId);
         this.particularOpenSubFilter.splice(index, 1);
+      }
+    },
+
+    // Function is used for open and hide sub filters in mobile view
+    showSubFIltersMobileView(productId) {
+      if (!this.particularOpenSubFilter.includes(productId)) {
+        this.particularOpenSubFilter.shift()
+        this.particularOpenSubFilter.push(productId);
+      } else {
+        this.particularOpenSubFilter.pop();
       }
     },
 
@@ -375,6 +358,11 @@ export default {
       // Do Something
       console.log("Page reload");
     },
+
+    // Function is use to show filter in moblie view
+    showFilters(boolean) {
+      this.showingMobileFilter = boolean;
+    }
   },
 
   created() {
@@ -480,6 +468,10 @@ export default {
 }
 
 /* filter and product place style...................... */
+.mobile-filter-container {
+  display: none;
+}
+
 .filter-product-container {
   width: 100%;
   display: flex;
@@ -515,6 +507,7 @@ li {
   border: 1px solid #707070;
   background-color: #fff;
 }
+
 .clear-button:hover {
   background-color: #000;
   color: #fff;
@@ -568,7 +561,7 @@ li {
 .one-product-container {
   display: flex;
   row-gap: 20px;
-  column-gap: 12px;
+  column-gap: 10px;
   flex-wrap: wrap;
 }
 
@@ -631,9 +624,11 @@ li {
 .bottom-nav-bar {
   display: none;
 }
+
 .show-in-desktop-view {
   display: block;
 }
+
 .show-in-mobile-view {
   display: none;
 }
@@ -642,38 +637,102 @@ li {
   .side-filter-container {
     display: none;
   }
+
   .product-container {
     width: 100%;
     box-sizing: border-box;
   }
+
   .product-image-container {
     width: 48%;
   }
+
   .image-kurta {
     width: 100%;
   }
+
   .one-product-container {
     justify-content: space-between;
     display: flex;
   }
+
   .hide-filter-container {
     display: none;
   }
+
   .dropdown-container {
     display: none;
   }
+
   .bottom-nav-bar {
     display: block;
   }
+
   .show-in-desktop-view {
     display: none;
   }
+
   .show-in-mobile-view {
     display: block;
   }
+
   .goto-icon {
     width: 16px;
     height: 16px;
   }
+
+  /* Style for filter in mobile view................................................ */
+  .mobile-filter-container {
+    display: block;
+    width: 100%;
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    z-index: 3242;
+    background-color: #fff;
+  }
+
+  /* .mobile-filter {
+    padding: 5px 2px;
+  } */
+  .header {
+    flex: 0 0 100%;
+    padding: 0px 20px;
+    background-color: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+    border-bottom: 1px solid #ccc;
+  }
+  .header-text {
+    font-size: 18px;
+    font-weight: 600;
+    padding: 15px 10px;
+    color: #000;
+  }
+  .filters-container {
+    width: 100%;
+    display: flex;
+    align-items: center;
+  }
+  .filter-lable-container {
+    width: 25%;
+  }
+  .label-button {
+    width: 100%;
+    border: none;
+    padding: 10px;
+  }
+  .filter-options-container {
+    width: 70%;
+  }
 }
+
+@media only screen and (max-width: 1024px) and (min-width: 769px) {
+  .product-image-container {
+  width: 32%;
+}
+} 
 </style>

@@ -26,9 +26,11 @@
         </div>
 
         <!-- slide nav bar............................... -->
-        <div @click="hideNavBar" v-if="isShowSideNavBar" class="slide-nav-container">
-
-            <div class="nav-container">
+            <div 
+            v-if="isShowSideNavBar"
+            :style="{width: isShowSideNavBar ? '75%' : '0%'}"
+             class="nav-container"
+              >
                 <div class="login-container">
                     <div>
                         <p class="login-text">Login</p>
@@ -64,8 +66,6 @@
 
                 </div>
             </div>
-
-        </div>
     </div>
 </template>
 
@@ -74,11 +74,12 @@ export default {
     name: "MobileViewNavBar",
     data() {
         return {
-            isShowSideNavBar: false
+            isShowSideNavBar: false,
         }
     },
     methods: {
         showNavBar() {
+            console.log("hello")
             this.isShowSideNavBar = true
         },
         hideNavBar() {
@@ -91,6 +92,11 @@ export default {
 <style scoped>
 .side-bar-container {
     width: 100%;
+    /* position: fixed;
+    left: 0px;
+    right: 0px;
+    top: 0px;
+    z-index: 34242; */
 }
 .upper-header {
     background-color: #9d8b61;
@@ -106,7 +112,6 @@ export default {
     display: flex;
     justify-content: space-between;
     box-shadow: 0px 4px 12px 0px rgb(0 0 0 / 5%);
-
 }
 
 .logo-container {
@@ -134,17 +139,11 @@ export default {
     width: 75%;
 }
 
-.slide-nav-container {
-    width: 100%;
-    background-color: transparent;
-}
-
 .nav-container {
-    width: 75%;
     position: fixed;
     top: 0px;
-    height: 100vh;
     z-index: 5453;
+    overflow-x: hidden;
 }
 .login-container {
     background-color: #501337;
@@ -164,6 +163,7 @@ export default {
 .links-container {
     background-color: #fff;
     padding: 12px 20px;
+    height: 100vh;
 }
 .links {
     display: flex;

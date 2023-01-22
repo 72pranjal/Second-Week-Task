@@ -35,10 +35,7 @@
 
       <!-- mobile view botton nav bar............................. -->
       <div class="bottom-nav-bar">
-        <SortAndFilterBar
-         :sortingOptions="sortingOptions" 
-         @showMobileFIlter="showFilters"
-         />
+        <SortAndFilterBar :sortingOptions="sortingOptions" @showMobileFIlter="showFilters" />
       </div>
     </div>
 
@@ -113,27 +110,25 @@
         <div class="header">
           <p class="header-text">Filters</p>
           <div v-if="appliedFiltersForChips.length">
-          <button @click="clearAllAppliedFilters" class="clear-button">
-            Clear All
-          </button>
-        </div>
+            <button @click="clearAllAppliedFilters" class="clear-button">
+              Clear All
+            </button>
+          </div>
         </div>
         <div v-for="(filters, index) in containFiltersData" :key="index">
           <div class="filters-container">
             <div class="filter-lable-container">
-                <button 
-                class="label-button"
-                :style="{backgroundColor: particularOpenSubFilter.includes(filters.filter_lable) ? '#fff' : ''}"
-                 @click="showSubFIltersMobileView(filters.filter_lable)"
-                 >
+              <button class="label-button"
+                :style="{ backgroundColor: particularOpenSubFilter.includes(filters.filter_lable) ? '#fff' : '' }"
+                @click="showSubFIltersMobileView(filters.filter_lable)">
                 {{ filters.filter_lable }}
               </button>
             </div>
             <div v-if="particularOpenSubFilter.includes(filters.filter_lable)" class="filter-options-container">
               <ul class="subfilters">
                 <li v-for="(subFilter, index) in filters.options" :key="index">
-                  <input class="checkbox" type="checkbox" v-model="appliedFiltersForChips" @click="getAppliedFilter(subFilter)"
-                    :id="subFilter.value" :value="subFilter.value" />
+                  <input class="checkbox" type="checkbox" v-model="appliedFiltersForChips"
+                    @click="getAppliedFilter(subFilter)" :id="subFilter.value" :value="subFilter.value" />
                   <label :for="subFilter.value" class="lable-subfilter">{{
                     subFilter.value
                   }}</label>
@@ -672,6 +667,27 @@ li {
     display: none;
   }
 
+  /* pagination view style in mobile view.......................... */
+  .pagination-container {
+    display: grid;
+  }
+ .total-page-container {
+  width: 100%;
+  padding-bottom: 15px;
+  text-align: center;
+}
+.counting-container {
+  width: 100%;
+  column-gap: 2px;
+  align-items: center;
+  color: #4c0b36;
+}
+.goto-clickable-page {
+  padding: 10px;
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
+}
   .show-in-mobile-view {
     display: block;
   }
@@ -706,25 +722,34 @@ li {
     margin-bottom: 5px;
     border-bottom: 1px solid #ccc;
   }
+
   .header-text {
     font-size: 18px;
     font-weight: 600;
     padding: 15px 10px;
     color: #000;
   }
+
   .filters-container {
     width: 100%;
     display: flex;
     align-items: center;
   }
+
   .filter-lable-container {
-    width: 25%;
+    width: 20%;
   }
+
   .label-button {
     width: 100%;
     border: none;
-    padding: 10px;
+    text-align: left;
+    font-size: 16px;
+    font-weight: 500;
+    color: #000;
+    padding: 14px 13px;
   }
+
   .filter-options-container {
     width: 70%;
   }
@@ -732,7 +757,7 @@ li {
 
 @media only screen and (max-width: 1024px) and (min-width: 769px) {
   .product-image-container {
-  width: 32%;
+    width: 32%;
+  }
 }
-} 
 </style>

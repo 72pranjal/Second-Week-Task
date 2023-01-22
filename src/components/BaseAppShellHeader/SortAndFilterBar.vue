@@ -61,7 +61,7 @@ export default {
     z-index: 10000;
     bottom: 0px;
     left: 0px;
-    right: opx;
+    right: 0px;
     display: flex;
     justify-content: space-between;
 }
@@ -107,7 +107,9 @@ ul {
     width: 95%;
     margin: auto;
     background-color: #fff;
-    bottom: 70px;
+    bottom: 50px;
+    left: 0px;
+    right: 0px;
     z-index: 54553;
 }
 </style>

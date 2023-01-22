@@ -349,6 +349,7 @@ input:focus {
 
   .social-meadia {
     display: flex;
+    flex-wrap: wrap;
     column-gap: 30px;
   }
 

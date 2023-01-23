@@ -53,7 +53,7 @@ export default {
             this.$emit("showMobileFIlter", this.isShowMobileFiler)
         },
         getOptionValue(option) {
-            this.$emit("getOptionValue", option)
+            this.$emit("getSelectedSort", option)
         }
     }
 };

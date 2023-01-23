@@ -38,7 +38,7 @@
         <SortAndFilterBar 
         :sortingOptions="dataForSorting"
          @showMobileFIlter="showFilters"
-         @getOptionValue="getSortValueFromMobileView"
+         @getSelectedSort="getSortValueFromMobileView"
           />
       </div>
     </div>
@@ -155,7 +155,7 @@
     <!-- Pagination section.................................. -->
     <div class="pagination-container">
       <div class="total-page-container">
-        <span>Page {{ currentPageNumber }} of 97 </span>
+        <span>Page {{ currentPageNumber }} of {{ totalpageNumber }} </span>
       </div>
 
       <div class="counting-container">
@@ -177,15 +177,19 @@
           {{ pageCount }}
         </button>
         <span class="show-in-desktop-view">
-          <button class="next-button" type="button" :style="{ opacity: currentPageNumber < 97 ? '' : '0.25' }"
+          <button class="next-button" type="button" :style="{ opacity: currentPageNumber < this.totalpageNumber ? '' : '0.25' }"
             @click="gotoNextPage">
             Next
           </button>
         </span>
         <span class="show-in-mobile-view">
           <img class="goto-icon" @click="gotoNextPage" src="@/assets/rightArrowIcon.png" alt=""
-            :style="{ opacity: currentPageNumber < 97 ? '' : '0.25' }" />
+            :style="{ opacity: currentPageNumber < this.totalpageNumber ? '' : '0.25' }" />
         </span>
+      </div>
+
+      <div class="total-page-container-2">
+        <span class="hidden-text">Total Page = {{ totalpageNumber }} </span>
       </div>
     </div>
   </div>
@@ -204,6 +208,7 @@ export default {
     "dataForProducts",
     "dataForSorting",
     "currentPagination",
+    "totalpageNumber"
   ],
   data() {
     return {
@@ -280,7 +285,7 @@ export default {
     // Function is used to goto page with increment of one in
     // current page using next button
     gotoNextPage() {
-      if (this.currentPageNumber < 97) {
+      if (this.currentPageNumber < this.totalpageNumber) {
         this.currentPageNumber += 1;
         this.$emit("handleClickThenActive", this.currentPageNumber);
       }
@@ -315,7 +320,7 @@ export default {
         i++
       ) {
         this.paginationNumbers.push(i);
-        if (i >= 97) break;
+        if (i >= this.totalpageNumber) break;
       }
     },
 
@@ -361,6 +366,11 @@ export default {
     showFilters(boolean) {
       this.showingMobileFilter = boolean;
     },
+
+    // Function is use to show get selected sorting option  in moblie view
+    getSortValueFromMobileView(selectedVal)  {
+      this.selectedSortingOption = selectedVal;
+    }
   },
 
   watch: {
@@ -567,18 +577,20 @@ li {
 /* pagination section ............................... */
 .pagination-container {
   width: 100%;
+  max-width: 100%;
+  flex: 0 0 100%;
   border-top: 1px solid black;
   margin: 30px 0px;
   padding: 30px 0px;
   display: flex;
+  justify-content: space-between;
 }
 
-.total-page-container {
-  width: 15%;
+.hidden-text {
+ display: none;
 }
 
 .counting-container {
-  width: 80%;
   margin-left: 10px;
   display: flex;
   column-gap: 20px;

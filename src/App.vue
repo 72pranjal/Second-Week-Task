@@ -4,7 +4,8 @@
     <div class="container">
       <ProductContainer v-if="filtersData.length" :dataForFilters="filtersData" :dataForProducts="productsData"
         :dataForSorting="sortingOptions" @handleClickThenActive="getProductOfCurrentPage" @sortData="getSortedData"
-        @getFilterString="getFilters" :currentPagination="currentPagination" />
+        @getFilterString="getFilters" :currentPagination="currentPagination"
+        :totalpageNumber="totalpageNumber" />
       <DestTopFooter />
     </div>
   </div>
@@ -28,6 +29,7 @@ export default {
       sortingOptions: [],
       totalProductCount: 0,
       currentPagination: 1,
+      totalpageNumber: 0,
       sortingValue: "",
       filterSting: "",
     };
@@ -42,6 +44,7 @@ export default {
         this.filtersData = response.data.result.filters;
         this.sortingOptions = response.data.result.sort;
         this.totalProductCount = response.data.result.count;
+        this.getTotalPageCount()
       });
     },
 
@@ -60,6 +63,8 @@ export default {
       const api = `https://pim.wforwoman.com/pim/pimresponse.php/?service=category&store=1&url_key=top-wear-kurtas&page=${this.currentPagination}&count=20&sort_by=&sort_dir=desc&filter=`;
       axios.get(api).then((response) => {
         this.productsData = response.data.result.products;
+        this.totalProductCount = response.data.result.count;
+        this.getTotalPageCount()
       });
     },
 
@@ -70,6 +75,8 @@ export default {
       const api = `https://pim.wforwoman.com/pim/pimresponse.php/?service=category&store=1&url_key=top-wear-kurtas&page=${this.currentPagination}&count=20&sort_by=&sort_dir=desc&filter=${this.filterSting}`;
       axios.get(api).then((response) => {
         this.productsData = response.data.result.products;
+        this.totalProductCount = response.data.result.count;
+        this.getTotalPageCount()
       });
     },
 
@@ -117,9 +124,13 @@ export default {
       } else {
         this.filterSting = ""
         this.getDataOfCurrentPage();
-        // this.getProductData();
       }
     },
+
+    getTotalPageCount() {
+      this.totalpageNumber = Math.ceil(this.totalProductCount / 20)
+      console.log("totalpageNumber",this.totalpageNumber)
+    }
   },
 
   mounted() {

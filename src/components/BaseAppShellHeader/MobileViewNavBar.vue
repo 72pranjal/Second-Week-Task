@@ -143,6 +143,7 @@ export default {
     position: fixed;
     top: 0px;
     z-index: 5453;
+    transition: 0.5s all;
     overflow-x: hidden;
 }
 .login-container {

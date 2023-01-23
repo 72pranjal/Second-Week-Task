@@ -27,7 +27,7 @@
           <option class="drop-options" value="" disabled selected>
             Sort By
           </option>
-          <option v-for="(option, index) in sortingOptions" :key="index" class="drop-options" :value="option.code">
+          <option v-for="(option, index) in dataForSorting" :key="index" class="drop-options" :value="option.code">
             {{ option.label }}
           </option>
         </select>
@@ -35,7 +35,11 @@
 
       <!-- mobile view botton nav bar............................. -->
       <div class="bottom-nav-bar">
-        <SortAndFilterBar :sortingOptions="sortingOptions" @showMobileFIlter="showFilters" />
+        <SortAndFilterBar 
+        :sortingOptions="dataForSorting"
+         @showMobileFIlter="showFilters"
+         @getOptionValue="getSortValueFromMobileView"
+          />
       </div>
     </div>
 
@@ -49,7 +53,7 @@
           </button>
         </div>
         <div>
-          <div class="filter-container" v-for="(filters, index) in containFiltersData" :key="index">
+          <div class="filter-container" v-for="(filters, index) in dataForFilters" :key="index">
             <div class="filter-head">
               <p @click="showSubFIlters(filters.filter_lable)">
                 {{ filters.filter_lable }}
@@ -81,7 +85,7 @@
       <!-- :style="{ width: isHideSideFilters ? '75%' : '100%' }" -->
       <div class="product-container">
         <div class="one-product-container">
-          <div v-for="(products, index) in containProductData" :key="index" class="product-image-container">
+          <div v-for="(products, index) in dataForProducts" :key="index" class="product-image-container">
             <div class="product-image">
               <img class="image-kurta" :src="products.image" alt="" />
 
@@ -115,25 +119,33 @@
             </button>
           </div>
         </div>
-        <div v-for="(filters, index) in containFiltersData" :key="index">
-          <div class="filters-container">
-            <div class="filter-lable-container">
-              <button class="label-button"
-                :style="{ backgroundColor: particularOpenSubFilter.includes(filters.filter_lable) ? '#fff' : '' }"
-                @click="showSubFIltersMobileView(filters.filter_lable)">
+        <div class="lable-and-options-container">
+          <div class="filter-lable-container-for-scroll">
+            <div class="filter-lable-container" v-for="(filters, index) in dataForFilters" :key="index">
+              <button class="label-button" :style="{
+                backgroundColor: particularOpenSubFilter.includes(
+                  filters.filter_lable
+                )
+                  ? '#fff'
+                  : '',
+              }" @click="showSubFIltersMobileView(filters.filter_lable)">
                 {{ filters.filter_lable }}
               </button>
             </div>
-            <div v-if="particularOpenSubFilter.includes(filters.filter_lable)" class="filter-options-container">
-              <ul class="subfilters">
-                <li v-for="(subFilter, index) in filters.options" :key="index">
-                  <input class="checkbox" type="checkbox" v-model="appliedFiltersForChips"
-                    @click="getAppliedFilter(subFilter)" :id="subFilter.value" :value="subFilter.value" />
-                  <label :for="subFilter.value" class="lable-subfilter">{{
-                    subFilter.value
-                  }}</label>
-                </li>
-              </ul>
+          </div>
+          <div class="options-container">
+            <div v-for="(filters, index) in dataForFilters" :key="index">
+              <div v-if="particularOpenSubFilter.includes(filters.filter_lable)">
+                <ul class="subfilters">
+                  <li v-for="(subFilter, index) in filters.options" :key="index">
+                    <input class="checkbox" type="checkbox" v-model="appliedFiltersForChips"
+                      @click="getAppliedFilter(subFilter)" :id="subFilter.value" :value="subFilter.value" />
+                    <label :for="subFilter.value" class="lable-subfilter">{{
+                      subFilter.value
+                    }}</label>
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>
@@ -195,10 +207,7 @@ export default {
   ],
   data() {
     return {
-      containFiltersData: [],
-      containProductData: [],
       particularOpenSubFilter: [],
-      sortingOptions: [],
       appliedFiltersForChips: [],
       isHideSideFilters: true,
       selectedSortingOption: "",
@@ -209,7 +218,6 @@ export default {
     };
   },
   methods: {
-
     // Function is used for open and hide sub filters in destTop view
     showSubFIlters(productId) {
       if (!this.particularOpenSubFilter.includes(productId)) {
@@ -223,7 +231,7 @@ export default {
     // Function is used for open and hide sub filters in mobile view
     showSubFIltersMobileView(productId) {
       if (!this.particularOpenSubFilter.includes(productId)) {
-        this.particularOpenSubFilter.shift()
+        this.particularOpenSubFilter.shift();
         this.particularOpenSubFilter.push(productId);
       } else {
         this.particularOpenSubFilter.pop();
@@ -325,7 +333,6 @@ export default {
 
     // Function is used to get data  from parent component
     getDataFrom() {
-      this.containFiltersData = this.dataForFilters;
       this.containProductData = this.dataForProducts;
       this.sortingOptions = this.dataForSorting;
     },
@@ -349,29 +356,16 @@ export default {
       }
       this.$emit("getFilterString", this.appliedFilter);
     },
-    handler() {
-      // Do Something
-      console.log("Page reload");
-    },
-
+   
     // Function is use to show filter in moblie view
     showFilters(boolean) {
       this.showingMobileFilter = boolean;
-    }
+    },
   },
 
-  created() {
-    window.addEventListener("beforeunload", this.handler);
-  },
-  mounted() {
-    this.getDataFrom();
-  },
   watch: {
     selectedSortingOption() {
       this.sortBySelectedOption();
-    },
-    dataForProducts() {
-      this.getDataFrom();
     },
     currentPagination() {
       this.currentPageNumber = this.currentPagination;
@@ -671,23 +665,27 @@ li {
   .pagination-container {
     display: grid;
   }
- .total-page-container {
-  width: 100%;
-  padding-bottom: 15px;
-  text-align: center;
-}
-.counting-container {
-  width: 100%;
-  column-gap: 2px;
-  align-items: center;
-  color: #4c0b36;
-}
-.goto-clickable-page {
-  padding: 10px;
-  border: none;
-  cursor: pointer;
-  font-size: 12px;
-}
+
+  .total-page-container {
+    width: 100%;
+    padding-bottom: 15px;
+    text-align: center;
+  }
+
+  .counting-container {
+    width: 100%;
+    column-gap: 2px;
+    align-items: center;
+    color: #4c0b36;
+  }
+
+  .goto-clickable-page {
+    padding: 10px;
+    border: none;
+    cursor: pointer;
+    font-size: 12px;
+  }
+
   .show-in-mobile-view {
     display: block;
   }
@@ -708,10 +706,6 @@ li {
     z-index: 3242;
     background-color: #fff;
   }
-
-  /* .mobile-filter {
-    padding: 5px 2px;
-  } */
   .header {
     flex: 0 0 100%;
     padding: 0px 20px;
@@ -730,14 +724,26 @@ li {
     color: #000;
   }
 
-  .filters-container {
+  .filter-lable-container {
     width: 100%;
-    display: flex;
-    align-items: center;
   }
 
-  .filter-lable-container {
-    width: 20%;
+  .filter-lable-container-for-scroll {
+    overflow: scroll;
+    width: 25%;
+    height: 75vh;
+  }
+
+  .options-container {
+    width: 70%;
+    padding: 10px 12px;
+    overflow: scroll;
+    height: 75vh;
+  }
+
+  .lable-and-options-container {
+    flex: 0 0 100%;
+    display: flex;
   }
 
   .label-button {
@@ -748,10 +754,6 @@ li {
     font-weight: 500;
     color: #000;
     padding: 14px 13px;
-  }
-
-  .filter-options-container {
-    width: 70%;
   }
 }
 

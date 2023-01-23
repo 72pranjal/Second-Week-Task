@@ -4,7 +4,11 @@
             <div class="sorting-option">
                 <ul>
                     <li>Sort: By</li>
-                    <li v-for="(sortoption, index) in sortingOptions" :key="index">
+                    <li 
+                    v-for="(sortoption, index) in sortingOptions"
+                    @click="getOptionValue(sortoption.code)"
+                     :key="index"
+                     >
                         {{ sortoption.label }}
                     </li>
                 </ul>
@@ -35,7 +39,7 @@ export default {
         return {
             isShowSortingList: false,
             isShowMobileFiler: false,
-            isHideMobileFIlter: false
+            isHideMobileFIlter: false,
         };
     },
     methods: {
@@ -47,6 +51,9 @@ export default {
         hideMobileFilter() {
            this.isShowMobileFiler = false
             this.$emit("showMobileFIlter", this.isShowMobileFiler)
+        },
+        getOptionValue(option) {
+            this.$emit("getOptionValue", option)
         }
     }
 };

@@ -43,15 +43,18 @@ export default {
         };
     },
     methods: {
+        // Function is used to show filters in mobile view
         showMobileFIlter() {
             this.isShowMobileFiler = true;
             this.isShowSortingList = false
             this.$emit("showMobileFIlter", this.isShowMobileFiler)
         },
+        // Function is used to hide filters in mobile view
         hideMobileFilter() {
            this.isShowMobileFiler = false
             this.$emit("showMobileFIlter", this.isShowMobileFiler)
         },
+        // Function is used to get the value of selected sorting options
         getOptionValue(option) {
             this.$emit("getSelectedSort", option)
         }

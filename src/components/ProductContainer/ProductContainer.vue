@@ -35,11 +35,8 @@
 
       <!-- mobile view botton nav bar............................. -->
       <div class="bottom-nav-bar">
-        <SortAndFilterBar 
-        :sortingOptions="dataForSorting"
-         @showMobileFIlter="showFilters"
-         @getSelectedSort="getSortValueFromMobileView"
-          />
+        <SortAndFilterBar :sortingOptions="dataForSorting" @showMobileFIlter="showFilters"
+          @getSelectedSort="getSortValueFromMobileView" />
       </div>
     </div>
 
@@ -82,8 +79,8 @@
         </div>
       </div>
       <!-- all products container........... -->
-      <!-- :style="{ width: isHideSideFilters ? '75%' : '100%' }" -->
-      <div class="product-container">
+      <div class="product-container"
+      >
         <div class="one-product-container">
           <div v-for="(products, index) in dataForProducts" :key="index" class="product-image-container">
             <div class="product-image">
@@ -112,7 +109,7 @@
     <div v-if="showingMobileFilter" class="mobile-filter-container">
       <div class="mobile-filter">
         <div class="header">
-          <p class="header-text">Filters</p>
+          <p class="header-text">FILTER</p>
           <div v-if="appliedFiltersForChips.length">
             <button @click="clearAllAppliedFilters" class="clear-button">
               Clear All
@@ -177,14 +174,16 @@
           {{ pageCount }}
         </button>
         <span class="show-in-desktop-view">
-          <button class="next-button" type="button" :style="{ opacity: currentPageNumber < this.totalpageNumber ? '' : '0.25' }"
-            @click="gotoNextPage">
+          <button class="next-button" type="button" :style="{
+            opacity: currentPageNumber < this.totalpageNumber ? '' : '0.25',
+          }" @click="gotoNextPage">
             Next
           </button>
         </span>
         <span class="show-in-mobile-view">
-          <img class="goto-icon" @click="gotoNextPage" src="@/assets/rightArrowIcon.png" alt=""
-            :style="{ opacity: currentPageNumber < this.totalpageNumber ? '' : '0.25' }" />
+          <img class="goto-icon" @click="gotoNextPage" src="@/assets/rightArrowIcon.png" alt="" :style="{
+            opacity: currentPageNumber < this.totalpageNumber ? '' : '0.25',
+          }" />
         </span>
       </div>
 
@@ -208,7 +207,7 @@ export default {
     "dataForProducts",
     "dataForSorting",
     "currentPagination",
-    "totalpageNumber"
+    "totalpageNumber",
   ],
   data() {
     return {
@@ -361,16 +360,16 @@ export default {
       }
       this.$emit("getFilterString", this.appliedFilter);
     },
-   
+
     // Function is use to show filter in moblie view
     showFilters(boolean) {
       this.showingMobileFilter = boolean;
     },
 
     // Function is use to show get selected sorting option  in moblie view
-    getSortValueFromMobileView(selectedVal)  {
+    getSortValueFromMobileView(selectedVal) {
       this.selectedSortingOption = selectedVal;
-    }
+    },
   },
 
   watch: {
@@ -380,6 +379,13 @@ export default {
     currentPagination() {
       this.currentPageNumber = this.currentPagination;
     },
+    totalpageNumber() {
+      if(this.totalpageNumber <= 1){
+        this.paginationNumbers.splice(0, this.paginationNumbers.length)
+      }else {
+        this.paginationNumbers = [1,2,3,4,5,6]
+      }
+    }
   },
 };
 </script>
@@ -541,7 +547,7 @@ li {
 
 /* style for product data................................ */
 .product-container {
-  width: 75%;
+  width: 100%;
   box-sizing: border-box;
 }
 
@@ -551,6 +557,7 @@ li {
 
 .product-image-container {
   width: 24%;
+  cursor: pointer;
 }
 
 .image-kurta {
@@ -587,7 +594,7 @@ li {
 }
 
 .hidden-text {
- display: none;
+  display: none;
 }
 
 .counting-container {
@@ -718,6 +725,7 @@ li {
     z-index: 3242;
     background-color: #fff;
   }
+
   .header {
     flex: 0 0 100%;
     padding: 0px 20px;
@@ -742,12 +750,12 @@ li {
 
   .filter-lable-container-for-scroll {
     overflow: scroll;
-    width: 25%;
+    width: 40%;
     height: 75vh;
   }
 
   .options-container {
-    width: 70%;
+    width: 60%;
     padding: 10px 12px;
     overflow: scroll;
     height: 75vh;

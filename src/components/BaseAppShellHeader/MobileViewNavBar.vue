@@ -6,7 +6,7 @@
             </p>
         </div>
 
-        <div class="lover-header">
+        <div :class="[navBarFixed ? 'lover-header-fixed' : 'lover-header']">
             <div class="logo-container">
                 <div>
                     <img class="side-nav-icon" @click="showNavBar" src="@/assets/sideNavIcon-.png" alt="" />
@@ -26,17 +26,14 @@
         </div>
 
         <!-- slide nav bar............................... -->
-            <div 
-            v-if="isShowSideNavBar"
-            :style="{width: isShowSideNavBar ? '75%' : '0%'}"
-             class="nav-container"
-              >
+        <div class="show-two-div" >
+            <div v-if="isShowSideNavBar" :style="{ width: isShowSideNavBar ? '75%' : '0%' }" class="nav-container">
                 <div class="login-container">
                     <div>
                         <p class="login-text">Login</p>
                     </div>
                     <div>
-                        <img @click="hideNavBar" class="cross-icon" src="@/assets/whiteCrossIcon.png" alt="">
+                        <img @click="isShowSideNavBar = !isShowSideNavBar" class="cross-icon" src="@/assets/whiteCrossIcon.png" alt="">
                     </div>
                 </div>
                 <div class="links-container">
@@ -66,12 +63,17 @@
 
                 </div>
             </div>
+            <div class="close-side-nav-bar" @click="isShowSideNavBar = !isShowSideNavBar">
+
+            </div>
+        </div>
     </div>
 </template>
 
 <script>
 export default {
     name: "MobileViewNavBar",
+    props: ["navBarFixed"],
     data() {
         return {
             isShowSideNavBar: false,
@@ -79,25 +81,13 @@ export default {
     },
     methods: {
         showNavBar() {
-            console.log("hello")
             this.isShowSideNavBar = true
         },
-        hideNavBar() {
-            this.isShowSideNavBar = false
-        }
     }
 };
 </script>
 
 <style scoped>
-.side-bar-container {
-    width: 100%;
-    /* position: fixed;
-    left: 0px;
-    right: 0px;
-    top: 0px;
-    z-index: 34242; */
-}
 .upper-header {
     background-color: #9d8b61;
     color: white;
@@ -112,6 +102,19 @@ export default {
     display: flex;
     justify-content: space-between;
     box-shadow: 0px 4px 12px 0px rgb(0 0 0 / 5%);
+}
+
+.lover-header-fixed {
+    background-color: #fff;
+    padding: 10px 8px;
+    display: flex;
+    justify-content: space-between;
+    box-shadow: 0px 4px 12px 0px rgb(0 0 0 / 5%);
+    position: fixed;
+    left: 0px;
+    right: 0px;
+    top: 0px;
+    z-index: 234;
 }
 
 .logo-container {
@@ -138,34 +141,48 @@ export default {
 .action-image {
     width: 75%;
 }
-
-.nav-container {
+.show-two-div {
+    width: 100%;
+    max-width: 100%;
+    flex: 0 0 100%;
+    display: flex;
     position: fixed;
     top: 0px;
-    z-index: 5453;
     transition: 0.5s all;
-    overflow-x: hidden;
+    z-index: 5453;
+}
+.nav-container {
+    width: 75%;
+}
+.close-side-nav-bar {
+    width: 26%;
+    max-width: 25%;
+    background-color: rgb(0,0,0, .8);
 }
 .login-container {
     background-color: #501337;
-    padding: 10px 20px ;
+    padding: 10px 20px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-}  
+}
+
 .cross-icon {
     width: 20px;
     height: 20px;
 }
+
 .login-text {
     font-size: 18px;
     color: #fff;
 }
+
 .links-container {
     background-color: #fff;
     padding: 12px 20px;
     height: 100vh;
 }
+
 .links {
     display: flex;
     justify-content: space-between;
@@ -173,6 +190,7 @@ export default {
     padding: 4px 0px;
     border-bottom: 1px solid #ccc;
 }
+
 .down-arrow {
     width: 25px;
     height: 25px;

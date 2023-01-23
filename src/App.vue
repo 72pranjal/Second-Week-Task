@@ -127,9 +127,9 @@ export default {
       }
     },
 
+    // Function is used to calculate total number of page
     getTotalPageCount() {
       this.totalpageNumber = Math.ceil(this.totalProductCount / 20)
-      console.log("totalpageNumber",this.totalpageNumber)
     }
   },
 

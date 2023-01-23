@@ -21,7 +21,9 @@
       </div>
 
       <!-- lover header........................... -->
-      <div class="lower-header-container">
+      <div 
+      :class="[navBarFixed ? 'lower-header-container-fixed' : 'lower-header-container']"
+      >
         <div class="first">
           <ul class="first-part-items">
             <li>
@@ -85,7 +87,9 @@
 
     <!-- mobile Nav bar ................................ -->
     <div class="mobile-nav">
-      <MobileViewNavBar />
+      <MobileViewNavBar
+      :navBarFixed="navBarFixed"
+       />
     </div>
 
     <!-- after nav bar text................... -->
@@ -104,6 +108,26 @@ export default {
     MobileViewNavBar,
   },
   props: ["totalProductCount"],
+  data(){
+    return {
+      scrollPosition: null,
+      navBarFixed : false
+    }
+  },
+  methods: {
+    // Function is use to calculate scroll position
+    getCurrentPosition() {
+      this.scrollPosition = window.scrollY;
+      if(this.scrollPosition > 30) {
+        this.navBarFixed = true
+      } else {
+        this.navBarFixed = false
+      }
+    }
+  },
+  mounted() {
+    window.addEventListener("scroll", this.getCurrentPosition)
+  }
 };
 </script>
 
@@ -151,6 +175,7 @@ display: block;
 
 li {
   list-style: none;
+  cursor: pointer;
 }
 
 /* lover nav bar ................... */
@@ -161,9 +186,21 @@ li {
   display: flex;
   font-size: 16px;
   background-color: #fff;
-  /* position: fixed;
-  z-index: 5455; */
   box-shadow: 0px 4px 12px 0px rgb(0 0 0 / 5%);
+}
+.lower-header-container-fixed {
+  color: #000;
+  width: 100%;
+  padding: 1% 0%;
+  display: flex;
+  font-size: 16px;
+  background-color: #fff;
+  box-shadow: 0px 4px 12px 0px rgb(0 0 0 / 5%);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 2323;
 }
 
 .down-arrao-icon {
@@ -227,8 +264,9 @@ li {
 
 .count-number {
   margin: 0px;
-  color: #303030;
+  color: #000;
   font-size: 18px;
+  font-weight: 800;
 }
 
 

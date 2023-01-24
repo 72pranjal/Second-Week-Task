@@ -68,7 +68,7 @@
               <ul class="subfilters">
                 <li v-for="(subFilter, index) in filters.options" :key="index">
                   <input class="checkbox" type="checkbox" v-model="appliedFiltersForChips"
-                    @click="getAppliedFilter(subFilter)" :id="subFilter.value" :value="subFilter.value" />
+                    @click="getAppliedFilter(subFilter.code, subFilter.value)" :id="subFilter.value" :value="subFilter.value" />
                   <label :for="subFilter.value" class="lable-subfilter">{{
                     subFilter.value
                   }}</label>
@@ -102,9 +102,6 @@
               <p>Rs. {{ products.price }}</p>
             </div>
           </div>
-        </div>
-        <div v-if="spinLoader" class="loader-gif">
-          <img class="loader" src="@/assets/loaderGIf.gif" alt="">
         </div>
       </div>
       <!-- <div v-else>
@@ -142,7 +139,7 @@
                 <ul class="subfilters">
                   <li v-for="(subFilter, index) in filters.options" :key="index">
                     <input class="checkbox" type="checkbox" v-model="appliedFiltersForChips"
-                      @click="getAppliedFilter(subFilter)" :id="subFilter.value" :value="subFilter.value" />
+                      @click="getAppliedFilter(subFilter.code, subFilter.value)" :id="subFilter.value" :value="subFilter.value" />
                     <label :for="subFilter.value" class="lable-subfilter">{{
                       subFilter.value
                     }}</label>
@@ -216,7 +213,6 @@ export default {
     "dataForSorting",
     "currentPagination",
     "totalpageNumber",
-    "spinLoader"
   ],
   data() {
     return {
@@ -262,6 +258,7 @@ export default {
     clearAllAppliedFilters() {
       this.appliedFiltersForChips.splice(0, this.appliedFiltersForChips.length);
       this.appliedFilter.splice(0, this.appliedFilter.length);
+      console.log("length", this.appliedFilter.length)
       this.$emit("getFilterString", this.appliedFilter);
     },
 
@@ -341,10 +338,10 @@ export default {
     },
 
     // Function is used get applied filter and store in array then send to api
-    getAppliedFilter(applyFilter) {
+    getAppliedFilter(codeVal, Value) {
       let ispushed = true;
       let index = null;
-      let codeAndValueWithHiphan = applyFilter.code + "-" + applyFilter.value;
+      let codeAndValueWithHiphan = codeVal + "-" + Value;
       for (let i = 0; i <= this.appliedFilter.length; i++) {
         if (this.appliedFilter[i] === codeAndValueWithHiphan) {
           ispushed = false;
@@ -369,11 +366,39 @@ export default {
     getSortValueFromMobileView(selectedVal) {
       this.selectedSortingOption = selectedVal;
     },
+
+    // Function is used to set current pageNo in route
+    setCurrentPageNoInRoute() {
+        this.$router.push({path: this.$route.fullPath, query: {pageNo: this.currentPageNumber}})
+    },
+
+    // Function is used to set selected route by user  in route
+    setAppliedSortInRoute() {
+      if(this.selectedSortingOption !== ""){
+        this.$router.push({path: this.$route.fullPath, query: {sort: this.selectedSortingOption }})
+      }
+    },
+
+    //Function is used to get the value of sort option from query
+    getValueFromRoute() {
+      this.selectedSortingOption = this.$route.query.sort
+      if(this.$route.query.filter !== "") {
+        let filterStr =  this.$route.query.filter;
+         let a = filterStr.split(',')
+         for(let i=0; i< a.length; i++) {
+          let  b = a[i].split("-")
+           this.getAppliedFilter(b[0], b[1])
+           this.appliedFiltersForChips.push(b[1])
+           console.log(b[0], b[1])
+         }
+      }
+    }
   },
 
   watch: {
     selectedSortingOption() {
       this.sortBySelectedOption();
+      this.setAppliedSortInRoute();
     },
     currentPagination() {
       this.currentPageNumber = this.currentPagination;
@@ -385,10 +410,15 @@ export default {
         this.paginationNumbers = [1,2,3,4,5,6]
       }
     },
-    spinLoader(newVal) {
-      console.log("hello", newVal)
-    }
+    currentPageNumber() {
+      this.setCurrentPageNoInRoute();
+    },
   },
+  mounted() {
+    this.setCurrentPageNoInRoute();
+    this.setAppliedSortInRoute();
+    this.getValueFromRoute();
+  }
 };
 </script>
 
@@ -556,17 +586,6 @@ li {
   width: 100%;
   box-sizing: border-box;
   position: relative;
-}
-.loader-gif {
-  position: absolute;
-  width: 50px;
-  left: 30%;
-  right: 30%;
-  top: 0%;
-}
-.loader {
-  width: 50px;
-  height: 50px;
 }
 
 .product-image {

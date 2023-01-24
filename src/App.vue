@@ -1,11 +1,11 @@
 <template>
   <div id="app">
     <DeskTopHeader :totalProductCount="totalProductCount" :currentPagination="currentPagination" />
+    <LoaderFordata :spinLoader="spinLoader" />
     <div class="container">
       <ProductContainer v-if="filtersData.length" :dataForFilters="filtersData" :dataForProducts="productsData"
         :dataForSorting="sortingOptions" @handleClickThenActive="getProductOfCurrentPage" @sortData="getSortedData"
-        @getFilterString="getFilters" :currentPagination="currentPagination"
-        :totalpageNumber="totalpageNumber" :spinLoader="spinLoader" />
+        @getFilterString="getFilters" :currentPagination="currentPagination" :totalpageNumber="totalpageNumber" />
       <DeskTopFooter />
     </div>
   </div>
@@ -15,12 +15,14 @@
 import DeskTopHeader from "./components/BaseAppShellHeader/DeskTopHeader.vue";
 import ProductContainer from "./components/ProductContainer/ProductContainer.vue";
 import DeskTopFooter from "./components/BaseAppShellFooter/DeskTopFooter.vue";
+import LoaderFordata from "./components/ProductContainer/LoaderForData.vue"
 
 export default {
   components: {
     DeskTopHeader,
     ProductContainer,
     DeskTopFooter,
+    LoaderFordata
   },
   data() {
     return {
@@ -39,7 +41,8 @@ export default {
   methods: {
     getProductData() {
       const axios = require("axios");
-      const api = `https://pim.wforwoman.com/pim/pimresponse.php/?service=category&store=1&url_key=top-wear-kurtas&page=${this.currentPagination}&count=20&sort_by=${this.sortingValue}&sort_dir=desc&filter=`;
+      const api = `https://pim.wforwoman.com/pim/pimresponse.php/?service=category&store=1&url_key=top-wear-kurtas&page=${this.currentPagination}&count=20&sort_by=${this.sortingValue}&sort_dir=desc&filter=${this.sortingValue}`;
+      this.spinLoader = true
       axios.get(api).then((response) => {
         console.log(response);
         this.productsData = response.data.result.products;
@@ -47,26 +50,32 @@ export default {
         this.sortingOptions = response.data.result.sort;
         this.totalProductCount = response.data.result.count;
         this.getTotalPageCount()
+        this.spinLoader = false
+
       });
     },
 
     // Function is used to get sorted data from according to selected sorting option
     getSortedDataFromApi() {
       const axios = require("axios");
-      const api = `https://pim.wforwoman.com/pim/pimresponse.php/?service=category&store=1&url_key=top-wear-kurtas&page=${this.currentPagination}&count=20&sort_by=${this.sortingValue}&sort_dir=desc&filter=`;
+      const api = `https://pim.wforwoman.com/pim/pimresponse.php/?service=category&store=1&url_key=top-wear-kurtas&page=${this.currentPagination}&count=20&sort_by=${this.sortingValue}&sort_dir=desc&filter=${this.filterSting}`;
+      this.spinLoader = true;
       axios.get(api).then((response) => {
         this.productsData = response.data.result.products;
+        this.spinLoader = false;
       });
     },
 
     // Function is used to get data of current page from api
     getDataOfCurrentPage() {
       const axios = require("axios");
-      const api = `https://pim.wforwoman.com/pim/pimresponse.php/?service=category&store=1&url_key=top-wear-kurtas&page=${this.currentPagination}&count=20&sort_by=&sort_dir=desc&filter=`;
+      const api = `https://pim.wforwoman.com/pim/pimresponse.php/?service=category&store=1&url_key=top-wear-kurtas&page=${this.currentPagination}&count=20&sort_by=${this.sortingValue}&sort_dir=desc&filter=${this.filterSting}`;
+      this.spinLoader = true;
       axios.get(api).then((response) => {
         this.productsData = response.data.result.products;
         this.totalProductCount = response.data.result.count;
         this.getTotalPageCount()
+        this.spinLoader = false;
       });
     },
 
@@ -74,11 +83,13 @@ export default {
     // applied filters bt user
     getFiltersData() {
       const axios = require("axios");
-      const api = `https://pim.wforwoman.com/pim/pimresponse.php/?service=category&store=1&url_key=top-wear-kurtas&page=${this.currentPagination}&count=20&sort_by=&sort_dir=desc&filter=${this.filterSting}`;
+      const api = `https://pim.wforwoman.com/pim/pimresponse.php/?service=category&store=1&url_key=top-wear-kurtas&page=${this.currentPagination}&count=20&sort_by=${this.sortingValue}&sort_dir=desc&filter=${this.filterSting}`;
+      this.spinLoader = true;
       axios.get(api).then((response) => {
         this.productsData = response.data.result.products;
         this.totalProductCount = response.data.result.count;
         this.getTotalPageCount()
+        this.spinLoader = false;
       });
     },
 
@@ -111,7 +122,7 @@ export default {
         if (applyFilters.length > 1) {
           let str = "";
           for (let i = 0; i < applyFilters.length; i++) {
-            if(!str){
+            if (!str) {
               str = str + applyFilters[i]
             } else {
               str = str + "," + applyFilters[i]
@@ -133,17 +144,21 @@ export default {
     getTotalPageCount() {
       this.totalpageNumber = Math.ceil(this.totalProductCount / 20)
     },
+    setAppliedFiltersInRoute() {
+      // if (this.filterSting !== "") {
+        this.$router.push({ path: this.$route.fullPath, query: { filter: this.filterSting } })
+      // }
+    }
   },
-
   mounted() {
+    this.setAppliedFiltersInRoute()
     this.getProductData();
-    if(!this.productsData.length){
-      this.spinLoader = true;
-      console.log("called")
-    } else {
-      this.spinLoader = false;
-    }     
   },
+  watch: {
+    filterSting() {
+      this.setAppliedFiltersInRoute()
+    }
+  }
 };
 </script>
 
@@ -152,8 +167,9 @@ export default {
   background-color: #fff;
   width: 100%;
 }
+
 .container {
- padding: 0px 10px;
- font-family: Jost-regular;
+  padding: 0px 10px;
+  font-family: Jost-regular;
 }
 </style>

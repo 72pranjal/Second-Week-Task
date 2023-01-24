@@ -24,7 +24,8 @@
                 </button>
             </div>
             <div class="filter-button">
-                <button @click="showMobileFIlter" class="action-button" type="button">FILTER</button>
+                <button v-if="appliedFilterLength === 0 " @click="showMobileFIlter" class="action-button" type="button">FILTER</button>
+                <button v-else @click="hideMobileFilter" class="action-button" type="button">Apply</button>
             </div>
         </div>
     </div>
@@ -34,7 +35,7 @@
 
 export default {
     name: "SortAndFilterBar",
-    props: ["sortingOptions"],
+    props: ["sortingOptions", "appliedFilterLength"],
     data() {
         return {
             isShowSortingList: false,

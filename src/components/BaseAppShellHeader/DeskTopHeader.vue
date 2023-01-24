@@ -21,9 +21,7 @@
       </div>
 
       <!-- lover header........................... -->
-      <div 
-      :class="[navBarFixed ? 'lower-header-container-fixed' : 'lower-header-container']"
-      >
+      <div :class="[navBarFixed ? 'lower-header-container-fixed' : 'lower-header-container']">
         <div class="first">
           <ul class="first-part-items">
             <li>
@@ -87,9 +85,7 @@
 
     <!-- mobile Nav bar ................................ -->
     <div class="mobile-nav">
-      <MobileViewNavBar
-      :navBarFixed="navBarFixed"
-       />
+      <MobileViewNavBar :navBarFixed="navBarFixed" />
     </div>
 
     <!-- after nav bar text................... -->
@@ -107,18 +103,18 @@ export default {
   components: {
     MobileViewNavBar,
   },
-  props: ["totalProductCount"],
-  data(){
+  props: ["totalProductCount", "currentPagination"],
+  data() {
     return {
       scrollPosition: null,
-      navBarFixed : false
+      navBarFixed: false
     }
   },
   methods: {
     // Function is use to calculate scroll position
     getCurrentPosition() {
       this.scrollPosition = window.scrollY;
-      if(this.scrollPosition > 30) {
+      if (this.scrollPosition > 30) {
         this.navBarFixed = true
       } else {
         this.navBarFixed = false
@@ -127,7 +123,15 @@ export default {
   },
   mounted() {
     window.addEventListener("scroll", this.getCurrentPosition)
-  }
+  },
+   watch: {
+    currentPagination(newVal) {
+    if(newVal > 1) window.scrollTo(100, 100)
+    
+    }
+   }
+
+
 };
 </script>
 
@@ -135,14 +139,17 @@ export default {
 .mobile-nav {
   display: none;
 }
+
 .both-nav-bar {
-display: block;
+  display: block;
 }
+
 .upper-nav-bar {
   background-color: #9d8b61;
   width: 100%;
   border-bottom: 1px solid #ccc;
 }
+
 .upper-nav-container {
   display: flex;
   justify-content: space-between;
@@ -188,6 +195,7 @@ li {
   background-color: #fff;
   box-shadow: 0px 4px 12px 0px rgb(0 0 0 / 5%);
 }
+
 .lower-header-container-fixed {
   color: #000;
   width: 100%;
@@ -269,13 +277,47 @@ li {
   font-weight: 800;
 }
 
+/* women list open on hover ...................... */
+/* .women-list-container {
+  width: 100%;
+  max-width: 100%;
+  background-color: #fff;
+}
+
+.womens-link-list {
+  flex: 0 0 100%;
+  padding: 10px 20px;
+  display: flex;
+
+}
+
+.mportant-links-container {
+  display: flex;
+  flex: 0 0 50%;
+  justify-content: space-between;
+}
+
+.image-container {
+  width: 50%;
+} */
+
 
 @media screen and (max-width: 999px) {
   .both-nav-bar {
     display: none;
   }
+
   .mobile-nav {
-  display: block;
-}
+    display: block;
+  }
+
+  .middle-text {
+    font-size: 20px;
+  }
+
+  .count-number {
+    font-size: 16px;
+
+  }
 }
 </style>

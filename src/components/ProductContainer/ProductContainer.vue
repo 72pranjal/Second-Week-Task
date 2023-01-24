@@ -36,7 +36,7 @@
       <!-- mobile view botton nav bar............................. -->
       <div class="bottom-nav-bar">
         <SortAndFilterBar :sortingOptions="dataForSorting" @showMobileFIlter="showFilters"
-          @getSelectedSort="getSortValueFromMobileView" />
+          @getSelectedSort="getSortValueFromMobileView" :appliedFilterLength="appliedFilter.length" />
       </div>
     </div>
 
@@ -51,16 +51,16 @@
         </div>
         <div>
           <div class="filter-container" v-for="(filters, index) in dataForFilters" :key="index">
-            <div class="filter-head">
+            <div class="filter-head" @click="showSubFIlters(filters.filter_lable)">
               <p @click="showSubFIlters(filters.filter_lable)">
                 {{ filters.filter_lable }}
               </p>
               <span v-if="!particularOpenSubFilter.includes(filters.filter_lable)">
-                <img @click="showSubFIlters(filters.filter_lable)" class="plus-icon" src="@/assets/plusIcon.png"
+                <img class="plus-icon" src="@/assets/plusIcon.png"
                   alt="" />
               </span>
               <span v-else>
-                <img @click="showSubFIlters(filters.filter_lable)" class="plus-icon" src="@/assets/minusIcon.png"
+                <img class="plus-icon" src="@/assets/minusIcon.png"
                   alt="" />
               </span>
             </div>
@@ -103,7 +103,13 @@
             </div>
           </div>
         </div>
+        <div v-if="spinLoader" class="loader-gif">
+          <img class="loader" src="@/assets/loaderGIf.gif" alt="">
+        </div>
       </div>
+      <!-- <div v-else>
+        <WhenProductIsEmapty />
+      </div> -->
     </div>
     <!-- Side filter in mobile vue................................................. -->
     <div v-if="showingMobileFilter" class="mobile-filter-container">
@@ -125,7 +131,7 @@
                 )
                   ? '#fff'
                   : '',
-              }" @click="showSubFIltersMobileView(filters.filter_lable)">
+              }" @click="showSubFIlters(filters.filter_lable)">
                 {{ filters.filter_lable }}
               </button>
             </div>
@@ -196,11 +202,13 @@
 
 <script>
 import SortAndFilterBar from "../BaseAppShellHeader/SortAndFilterBar.vue";
+// import WhenProductIsEmapty from "./WhenProductIsEmpty.vue"
 
 export default {
   name: "ProductContainer",
   components: {
     SortAndFilterBar,
+    // WhenProductIsEmapty
   },
   props: [
     "dataForFilters",
@@ -208,6 +216,7 @@ export default {
     "dataForSorting",
     "currentPagination",
     "totalpageNumber",
+    "spinLoader"
   ],
   data() {
     return {
@@ -224,16 +233,6 @@ export default {
   methods: {
     // Function is used for open and hide sub filters in destTop view
     showSubFIlters(productId) {
-      if (!this.particularOpenSubFilter.includes(productId)) {
-        this.particularOpenSubFilter.push(productId);
-      } else {
-        let index = this.particularOpenSubFilter.indexOf(productId);
-        this.particularOpenSubFilter.splice(index, 1);
-      }
-    },
-
-    // Function is used for open and hide sub filters in mobile view
-    showSubFIltersMobileView(productId) {
       if (!this.particularOpenSubFilter.includes(productId)) {
         this.particularOpenSubFilter.shift();
         this.particularOpenSubFilter.push(productId);
@@ -385,6 +384,9 @@ export default {
       }else {
         this.paginationNumbers = [1,2,3,4,5,6]
       }
+    },
+    spinLoader(newVal) {
+      console.log("hello", newVal)
     }
   },
 };
@@ -522,12 +524,16 @@ li {
   margin: 0px;
   padding: 0px;
 }
+.lable-subfilter {
+  cursor: pointer;
+}
 
 .filter-head {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 5px 0px;
+  cursor: pointer;
 }
 
 .plus-icon {
@@ -549,6 +555,18 @@ li {
 .product-container {
   width: 100%;
   box-sizing: border-box;
+  position: relative;
+}
+.loader-gif {
+  position: absolute;
+  width: 50px;
+  left: 30%;
+  right: 30%;
+  top: 0%;
+}
+.loader {
+  width: 50px;
+  height: 50px;
 }
 
 .product-image {
@@ -648,6 +666,7 @@ li {
 
   .product-container {
     width: 100%;
+    position: relative;
     box-sizing: border-box;
   }
 

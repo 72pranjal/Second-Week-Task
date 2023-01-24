@@ -12,42 +12,16 @@
     <div class="footer">
       <div class="footer-body-container">
         <div class="footer-link-container">
-          <ul class="links">
-            <li class="heading">SHOP</li>
-            <li>Men</li>
-            <li>Women</li>
-            <li>Home</li>
-            <li>Sale</li>
-            <li>Collection</li>
-          </ul>
-          <ul class="links">
-            <li class="heading">QUICK LINKS</li>
-            <li>Ahujasons Export</li>
-            <li>Our Story</li>
-            <li>Lageacy</li>
-            <li>Craftman</li>
-            <li>Blogs</li>
-          </ul>
-          <ul class="links">
-            <li class="heading">CUSTOM SERVICES</li>
-            <li>Tersm & Conditions</li>
-            <li>Shipping & Delivery</li>
-            <li>Returns & Collection</li>
-            <li>Contact Us</li>
-            <li>Store Oppoinment</li>
-          </ul>
-          <ul class="links">
-            <li class="heading">MY PROFILE</li>
-            <li>My Acount</li>
-            <li>Track Order</li>
-            <li>My Cart</li>
-            <li>Wishlist</li>
-            <li>Order History</li>
-          </ul>
+          <ul class="links" v-for="links, index in linksItems" :key="index">
+            <p class="heading">{{ links.heading }}</p>
+            <li v-for="sublink, index  in links.sublinks" :key="index">
+              {{ sublink }}
+            </li>
+          </ul>    
         </div>
         <div class="footer-social-media-container">
           <div class="email-subscribe-container">
-            <p>SIGN UP AND SAVE</p>
+            <p class="heading">SIGN UP AND SAVE</p>
             <p>
               Subscribe to our newsletter and get 10% off your first purchase
             </p>
@@ -108,7 +82,7 @@
         <div class="mobile-links-container">
           <ul v-for="(linkItems, index) in linksItems" :key="index">
             <div class="heading-plus-icon-container">
-              <div class="heading-plus-icon">
+              <div class="heading-plus-icon" @click="showSubList(linkItems.heading)">
                 <li class="main-link">{{ linkItems.heading }}</li>
                 <span v-if="!openedSubLink.includes(linkItems.heading)">
                   <img
@@ -149,7 +123,7 @@
 
 <script>
 export default {
-  name: "DestTopFooter",
+  name: "DeskTopFooter",
   data() {
     return {
       linksItems: [
@@ -189,6 +163,7 @@ export default {
     // Functiion is used to show sublinks in footer
     showSubList(headLink) {
       if (!this.openedSubLink.includes(headLink)) {
+        this.openedSubLink.shift()
         this.openedSubLink.push(headLink);
       } else {
         let index = this.openedSubLink.indexOf(headLink);
@@ -261,7 +236,6 @@ ul {
 
 .footer-link-container {
   flex: 0 0 62%;
-  padding: 9px;
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
@@ -270,7 +244,7 @@ ul {
 .heading {
   color: #303030;
   font-size: 16px;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .footer-social-media-container {

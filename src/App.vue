@@ -1,12 +1,12 @@
 <template>
   <div id="app">
-    <DeskTopHeader :totalProductCount="totalProductCount" />
+    <DeskTopHeader :totalProductCount="totalProductCount" :currentPagination="currentPagination" />
     <div class="container">
       <ProductContainer v-if="filtersData.length" :dataForFilters="filtersData" :dataForProducts="productsData"
         :dataForSorting="sortingOptions" @handleClickThenActive="getProductOfCurrentPage" @sortData="getSortedData"
         @getFilterString="getFilters" :currentPagination="currentPagination"
-        :totalpageNumber="totalpageNumber" />
-      <DestTopFooter />
+        :totalpageNumber="totalpageNumber" :spinLoader="spinLoader" />
+      <DeskTopFooter />
     </div>
   </div>
 </template>
@@ -14,13 +14,13 @@
 <script>
 import DeskTopHeader from "./components/BaseAppShellHeader/DeskTopHeader.vue";
 import ProductContainer from "./components/ProductContainer/ProductContainer.vue";
-import DestTopFooter from "./components/BaseAppShellFooter/DestTopFooter.vue";
+import DeskTopFooter from "./components/BaseAppShellFooter/DeskTopFooter.vue";
 
 export default {
   components: {
     DeskTopHeader,
     ProductContainer,
-    DestTopFooter,
+    DeskTopFooter,
   },
   data() {
     return {
@@ -32,6 +32,8 @@ export default {
       totalpageNumber: 0,
       sortingValue: "",
       filterSting: "",
+      gotoTop: 0,
+      spinLoader: false
     };
   },
   methods: {
@@ -130,11 +132,17 @@ export default {
     // Function is used to calculate total number of page
     getTotalPageCount() {
       this.totalpageNumber = Math.ceil(this.totalProductCount / 20)
-    }
+    },
   },
 
   mounted() {
     this.getProductData();
+    if(!this.productsData.length){
+      this.spinLoader = true;
+      console.log("called")
+    } else {
+      this.spinLoader = false;
+    }     
   },
 };
 </script>

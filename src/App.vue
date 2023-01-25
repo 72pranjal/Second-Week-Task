@@ -55,33 +55,11 @@ export default {
       });
     },
 
-    // Function is used to get sorted data from according to selected sorting option
-    getSortedDataFromApi() {
-      const axios = require("axios");
-      const api = `https://pim.wforwoman.com/pim/pimresponse.php/?service=category&store=1&url_key=top-wear-kurtas&page=${this.currentPagination}&count=20&sort_by=${this.sortingValue}&sort_dir=desc&filter=${this.filterSting}`;
-      this.spinLoader = true;
-      axios.get(api).then((response) => {
-        this.productsData = response.data.result.products;
-        this.spinLoader = false;
-      });
-    },
-
-    // Function is used to get data of current page from api
-    getDataOfCurrentPage() {
-      const axios = require("axios");
-      const api = `https://pim.wforwoman.com/pim/pimresponse.php/?service=category&store=1&url_key=top-wear-kurtas&page=${this.currentPagination}&count=20&sort_by=${this.sortingValue}&sort_dir=desc&filter=${this.filterSting}`;
-      this.spinLoader = true;
-      axios.get(api).then((response) => {
-        this.productsData = response.data.result.products;
-        this.totalProductCount = response.data.result.count;
-        this.getTotalPageCount()
-        this.spinLoader = false;
-      });
-    },
-
-    // Function is used to get product data from api accoding to
-    // applied filters bt user
-    getFiltersData() {
+    // Function is used to get data from api when user 
+    // Change current page
+    // When user applied filter
+    // when user applied sorting on data
+    getDataUpdateDataFromApi() {
       const axios = require("axios");
       const api = `https://pim.wforwoman.com/pim/pimresponse.php/?service=category&store=1&url_key=top-wear-kurtas&page=${this.currentPagination}&count=20&sort_by=${this.sortingValue}&sort_dir=desc&filter=${this.filterSting}`;
       this.spinLoader = true;
@@ -97,11 +75,8 @@ export default {
     // and get data according to current page
     getProductOfCurrentPage(currentPage) {
       this.currentPagination = currentPage;
-      if (this.filterSting) {
-        this.getFiltersData();
-      } else {
-        this.getDataOfCurrentPage();
-      }
+      this.getDataUpdateDataFromApi();
+     
     },
 
     // Function is used to check
@@ -113,7 +88,7 @@ export default {
       if (this.currentPagination !== 1 && this.sortingValue !== "") {
         this.currentPagination = 1;
       }
-      this.getSortedDataFromApi();
+      this.getDataUpdateDataFromApi();
     },
 
     // Function is used check the applied filter array lenght is zero or not
@@ -133,10 +108,10 @@ export default {
           this.filterSting = applyFilters[0];
         }
         if (this.currentPagination > 1) this.currentPagination = 1;
-        this.getFiltersData();
+        this.getDataUpdateDataFromApi();
       } else {
         this.filterSting = ""
-        this.getDataOfCurrentPage();
+        this.getDataUpdateDataFromApi();
       }
     },
 
@@ -145,9 +120,9 @@ export default {
       this.totalpageNumber = Math.ceil(this.totalProductCount / 20)
     },
     setAppliedFiltersInRoute() {
-      // if (this.filterSting !== "") {
+      if (this.filterSting !== "") {
         this.$router.push({ path: this.$route.fullPath, query: { filter: this.filterSting } })
-      // }
+      }
     }
   },
   mounted() {

@@ -57,7 +57,7 @@
         <div class="second">
           <ul class="first-part-items">
             <li>
-              <div class="show-in-line">
+              <div @focusin="showStory" @focusout="hideStory" class="show-in-line">
                 <p>OUR STORY</p>
                 <span>
                   <img class="down-arrao-icon" src="@/assets/downArrowImage.webp" alt="" />
@@ -107,7 +107,8 @@ export default {
   data() {
     return {
       scrollPosition: null,
-      navBarFixed: false
+      navBarFixed: false,
+      showOurStory: false
     }
   },
   methods: {
@@ -119,6 +120,15 @@ export default {
       } else {
         this.navBarFixed = false
       }
+    },
+    showStory() {
+      console.log("called")
+      this.showOurStory = true;
+      this.$emit("showStory", this.showOurStory)
+    },
+    hideStory() {
+      this.showOurStory = false;
+      this.$emit("showStory", this.showOurStory)
     }
   },
   mounted() {
@@ -276,31 +286,6 @@ li {
   font-size: 18px;
   font-weight: 800;
 }
-
-/* women list open on hover ...................... */
-/* .women-list-container {
-  width: 100%;
-  max-width: 100%;
-  background-color: #fff;
-}
-
-.womens-link-list {
-  flex: 0 0 100%;
-  padding: 10px 20px;
-  display: flex;
-
-}
-
-.mportant-links-container {
-  display: flex;
-  flex: 0 0 50%;
-  justify-content: space-between;
-}
-
-.image-container {
-  width: 50%;
-} */
-
 
 @media screen and (max-width: 999px) {
   .both-nav-bar {

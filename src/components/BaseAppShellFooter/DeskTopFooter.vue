@@ -86,7 +86,6 @@
                 <li class="main-link">{{ linkItems.heading }}</li>
                 <span v-if="!openedSubLink.includes(linkItems.heading)">
                   <img
-                    @click="showSubList(linkItems.heading)"
                     class="action-icon"
                     src="@/assets/plusIcon.png"
                     alt=""
@@ -94,7 +93,6 @@
                 </span>
                 <span v-else>
                   <img
-                    @click="showSubList(linkItems.heading)"
                     class="action-icon"
                     src="@/assets/minusIcon.png"
                     alt=""
@@ -166,8 +164,7 @@ export default {
         this.openedSubLink.shift()
         this.openedSubLink.push(headLink);
       } else {
-        let index = this.openedSubLink.indexOf(headLink);
-        this.openedSubLink.splice(index, 1);
+        this.openedSubLink.pop()
       }
     },
   },

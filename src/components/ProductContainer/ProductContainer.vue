@@ -56,19 +56,18 @@
                 {{ filters.filter_lable }}
               </p>
               <span v-if="!particularOpenSubFilter.includes(filters.filter_lable)">
-                <img class="plus-icon" src="@/assets/plusIcon.png"
-                  alt="" />
+                <img class="plus-icon" src="@/assets/plusIcon.png" alt="" />
               </span>
               <span v-else>
-                <img class="plus-icon" src="@/assets/minusIcon.png"
-                  alt="" />
+                <img class="plus-icon" src="@/assets/minusIcon.png" alt="" />
               </span>
             </div>
             <div v-if="particularOpenSubFilter.includes(filters.filter_lable)">
               <ul class="subfilters">
                 <li v-for="(subFilter, index) in filters.options" :key="index">
                   <input class="checkbox" type="checkbox" v-model="appliedFiltersForChips"
-                    @click="getAppliedFilter(subFilter.code, subFilter.value)" :id="subFilter.value" :value="subFilter.value" />
+                    @click="getAppliedFilter(subFilter.code, subFilter.value)" :id="subFilter.value"
+                    :value="subFilter.value" />
                   <label :for="subFilter.value" class="lable-subfilter">{{
                     subFilter.value
                   }}</label>
@@ -79,8 +78,7 @@
         </div>
       </div>
       <!-- all products container........... -->
-      <div class="product-container"
-      >
+      <div class="product-container">
         <div class="one-product-container">
           <div v-for="(products, index) in dataForProducts" :key="index" class="product-image-container">
             <div class="product-image">
@@ -139,7 +137,8 @@
                 <ul class="subfilters">
                   <li v-for="(subFilter, index) in filters.options" :key="index">
                     <input class="checkbox" type="checkbox" v-model="appliedFiltersForChips"
-                      @click="getAppliedFilter(subFilter.code, subFilter.value)" :id="subFilter.value" :value="subFilter.value" />
+                      @click="getAppliedFilter(subFilter.code, subFilter.value)" :id="subFilter.value"
+                      :value="subFilter.value" />
                     <label :for="subFilter.value" class="lable-subfilter">{{
                       subFilter.value
                     }}</label>
@@ -190,7 +189,7 @@
         </span>
       </div>
 
-      <div class="total-page-container-2">
+       <div class="total-page-container-2">
         <span class="hidden-text">Total Page = {{ totalpageNumber }} </span>
       </div>
     </div>
@@ -241,7 +240,7 @@ export default {
     // on cross icon
     removeAppliedFilter(index) {
       this.appliedFiltersForChips.splice(index, 1);
-      this.appliedFilter.pop();
+      this.appliedFilter.splice(index, 1);
       this.$emit("getFilterString", this.appliedFilter);
     },
 
@@ -258,7 +257,6 @@ export default {
     clearAllAppliedFilters() {
       this.appliedFiltersForChips.splice(0, this.appliedFiltersForChips.length);
       this.appliedFilter.splice(0, this.appliedFilter.length);
-      console.log("length", this.appliedFilter.length)
       this.$emit("getFilterString", this.appliedFilter);
     },
 
@@ -351,8 +349,10 @@ export default {
       }
       if (ispushed) {
         this.appliedFilter.push(codeAndValueWithHiphan);
+        console.log("in ", this.appliedFilter)
       } else {
         this.appliedFilter.splice(index, 1);
+        console.log("out", this.appliedFilter)
       }
       this.$emit("getFilterString", this.appliedFilter);
     },
@@ -369,28 +369,29 @@ export default {
 
     // Function is used to set current pageNo in route
     setCurrentPageNoInRoute() {
-        this.$router.push({path: this.$route.fullPath, query: {pageNo: this.currentPageNumber}})
+      this.$router.push({ path: this.$route.fullPath, query: { pageNo: this.currentPageNumber } })
     },
 
     // Function is used to set selected route by user  in route
     setAppliedSortInRoute() {
-      if(this.selectedSortingOption !== ""){
-        this.$router.push({path: this.$route.fullPath, query: {sort: this.selectedSortingOption }})
+      if (this.selectedSortingOption !== "") {
+        this.$router.push({ path: this.$route.fullPath, query: { sort: this.selectedSortingOption } })
       }
     },
 
-    //Function is used to get the value of sort option from query
+    //Function is used to get the value of sort option and applied filters from query
     getValueFromRoute() {
       this.selectedSortingOption = this.$route.query.sort
-      if(this.$route.query.filter !== "") {
-        let filterStr =  this.$route.query.filter;
-         let a = filterStr.split(',')
-         for(let i=0; i< a.length; i++) {
-          let  b = a[i].split("-")
-           this.getAppliedFilter(b[0], b[1])
-           this.appliedFiltersForChips.push(b[1])
-           console.log(b[0], b[1])
-         }
+      if (this.$route.query.filter !== "") {
+        let filterStr = this.$route.query.filter;
+        let a = filterStr.split(',')
+        for (let i = 0; i < a.length; i++) {
+          let b = a[i].split("-")
+          this.getAppliedFilter(b[0], b[1])
+          this.appliedFiltersForChips.push(b[1])
+        }
+        if (this.selectedSortingOption !== "")
+          this.sortBySelectedOption();
       }
     }
   },
@@ -404,10 +405,10 @@ export default {
       this.currentPageNumber = this.currentPagination;
     },
     totalpageNumber() {
-      if(this.totalpageNumber <= 1){
+      if (this.totalpageNumber <= 1) {
         this.paginationNumbers.splice(0, this.paginationNumbers.length)
-      }else {
-        this.paginationNumbers = [1,2,3,4,5,6]
+      } else {
+        this.paginationNumbers = [1, 2, 3, 4, 5, 6]
       }
     },
     currentPageNumber() {
@@ -554,6 +555,7 @@ li {
   margin: 0px;
   padding: 0px;
 }
+
 .lable-subfilter {
   cursor: pointer;
 }

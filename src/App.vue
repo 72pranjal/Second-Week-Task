@@ -1,11 +1,17 @@
 <template>
   <div id="app">
-    <DeskTopHeader :totalProductCount="totalProductCount" :currentPagination="currentPagination" />
-    <LoaderFordata :spinLoader="spinLoader" />
-    <div class="container">
-      <ProductContainer v-if="filtersData.length" :dataForFilters="filtersData" :dataForProducts="productsData"
-        :dataForSorting="sortingOptions" @handleClickThenActive="getProductOfCurrentPage" @sortData="getSortedData"
-        @getFilterString="getFilters" :currentPagination="currentPagination" :totalpageNumber="totalpageNumber" />
+    <DeskTopHeader :totalProductCount="totalProductCount" :currentPagination="currentPagination"
+      @showStory="showOurStory" />
+    <div>
+      <LoaderFordata :spinLoader="spinLoader" />
+      <div v-if="!showStoryData" class="container">
+        <ProductContainer v-if="filtersData.length" :dataForFilters="filtersData" :dataForProducts="productsData"
+          :dataForSorting="sortingOptions" @handleClickThenActive="getProductOfCurrentPage" @sortData="getSortedData"
+          @getFilterString="getFilters" :currentPagination="currentPagination" :totalpageNumber="totalpageNumber" />
+      </div>
+      <div v-else>
+        <OurStory />
+      </div>
       <DeskTopFooter />
     </div>
   </div>
@@ -16,13 +22,15 @@ import DeskTopHeader from "./components/BaseAppShellHeader/DeskTopHeader.vue";
 import ProductContainer from "./components/ProductContainer/ProductContainer.vue";
 import DeskTopFooter from "./components/BaseAppShellFooter/DeskTopFooter.vue";
 import LoaderFordata from "./components/ProductContainer/LoaderForData.vue"
+import OurStory from "./components/ProductContainer/OurStory.vue";
 
 export default {
   components: {
     DeskTopHeader,
     ProductContainer,
     DeskTopFooter,
-    LoaderFordata
+    LoaderFordata,
+    OurStory
   },
   data() {
     return {
@@ -35,7 +43,8 @@ export default {
       sortingValue: "",
       filterSting: "",
       gotoTop: 0,
-      spinLoader: false
+      spinLoader: false,
+      showStoryData: false
     };
   },
   methods: {
@@ -76,7 +85,7 @@ export default {
     getProductOfCurrentPage(currentPage) {
       this.currentPagination = currentPage;
       this.getDataUpdateDataFromApi();
-     
+
     },
 
     // Function is used to check
@@ -107,10 +116,12 @@ export default {
         } else {
           this.filterSting = applyFilters[0];
         }
+        this.$router.push({ path: this.$route.fullPath, query: { filter: this.filterSting } })
         if (this.currentPagination > 1) this.currentPagination = 1;
         this.getDataUpdateDataFromApi();
       } else {
         this.filterSting = ""
+        this.$router.push({ path: this.$route.fullPath, query: { filter: this.filterSting } })
         this.getDataUpdateDataFromApi();
       }
     },
@@ -119,19 +130,18 @@ export default {
     getTotalPageCount() {
       this.totalpageNumber = Math.ceil(this.totalProductCount / 20)
     },
-    setAppliedFiltersInRoute() {
-      if (this.filterSting !== "") {
-        this.$router.push({ path: this.$route.fullPath, query: { filter: this.filterSting } })
-      }
+    showOurStory(bollean) {
+      console.log("parent" ,bollean)
+      this.showStoryData = bollean
     }
+
   },
   mounted() {
-    this.setAppliedFiltersInRoute()
     this.getProductData();
   },
   watch: {
     filterSting() {
-      this.setAppliedFiltersInRoute()
+      this.getDataUpdateDataFromApi();
     }
   }
 };

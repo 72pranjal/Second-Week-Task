@@ -58,6 +58,7 @@ export default {
         // Function is used to get the value of selected sorting options
         getOptionValue(option) {
             this.$emit("getSelectedSort", option)
+            this.isShowSortingList = false
         }
     }
 };
